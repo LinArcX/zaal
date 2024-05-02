@@ -1,12 +1,14 @@
-# Kaveh
+# Zaal
 A simple programming language.
 
 Got ideas from:
 - https://github.com/DoctorWkt/acwj
 - https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html
 
-# Who's kaveh?
-"Kaveh the Blacksmith" is a 5000-year-old figure in Iranian mythology who leads a popular uprising against a ruthless foreign ruler, Zahāk.
+# Who's Zaal?
+> Zaal was born with white hair. He was rejected by his father, who blamed the evil spirit, Ahriman, for the appearance of his son..
+
+[Read more](https://en.wikipedia.org/wiki/Z%C4%81l)
 
 ## tools
 - git

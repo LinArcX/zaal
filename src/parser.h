@@ -16,7 +16,15 @@ struct ASTnode
   int op;				
   struct ASTnode *left;	
   struct ASTnode *right;
-  int intvalue;			
+  union {
+    int id;
+    int intvalue;			
+  }v;
+};
+
+struct symbolTable
+{
+  char *name;
 };
 
 struct ASTnode *buildASTNode(int op, struct ASTnode *left, struct ASTnode *right, int intvalue);

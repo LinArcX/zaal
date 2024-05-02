@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 ################################################################################
-#                                    kaveh
+#                                    zaal
 ################################################################################
 # There's a __project.sh__ at the root. load it first: `. project.sh`
 #
@@ -42,17 +42,17 @@ build_dir="build/$mode"
 
 mode_flags=""
 if [ "$mode" == "debug" ]; then
-  app="kaveh"
+  app="zaal"
   mode_flags="-g -pg -O0 -DDEBUG"
 fi
 
 if [ "$mode" == "release" ]; then
-  app="kaveh"
+  app="zaal"
   mode_flags="-O3 -pg"
 fi
 
 if [ "$mode" == "test" ]; then
-  app="kaveh_test"
+  app="zaal_test"
 fi
 
 _generateTags() {

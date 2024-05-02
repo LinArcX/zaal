@@ -20,8 +20,11 @@ typedef enum
   TOKEN_STAR,
   TOKEN_SLASH,
   TOKEN_SEMICOLON,
+  TOKEN_EQUALS,
   TOKEN_PRINT,
+  TOKEN_INT,
   TOKEN_INTEGER,
+  TOKEN_IDENTIFIER
 } TokenTypes;
 
 typedef struct

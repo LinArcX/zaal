@@ -3,6 +3,8 @@ statements: statement
           ;
 
 statement: 'print' expression ';'
+         | 'int'   identifier ';'
+         | identifier '=' expression ';'
          ;
 
 expression: number

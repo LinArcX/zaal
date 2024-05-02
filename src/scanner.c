@@ -89,10 +89,18 @@ keyword(char *s)
 {
   switch (*s) 
   {
-    case 'p':
-      if (!strcmp(s, "print"))
-        return (TOKEN_PRINT);
-      break;
+  case 'p':
+    if (!strcmp(s, "print"))
+    {
+      return (TOKEN_PRINT);
+    }
+    break;
+  case 'i':
+    if (!strcmp(s, "int"))
+    {
+      return (TOKEN_INT);
+    }
+    break;
   }
   return (0);
 }
@@ -162,6 +170,10 @@ scan(Token * token)
     {
       token->type = TOKEN_SEMICOLON;
     }
+    else if('=' == ch)
+    {
+      token->type = TOKEN_EQUALS;
+    }
     else 
     {
       if (isdigit(ch))
@@ -171,17 +183,19 @@ scan(Token * token)
       }
       else if (isalpha(ch) || '_' == ch) 
       {
-        int tokenType;
         // Read in a keyword or identifier
         scanIdentifier(ch, Text, TEXTLEN);
 
-        // If it's a recognised keyword, return that token
-        tokenType = keyword(Text);
+        int tokenType = keyword(Text);
         if (tokenType)
         {
           token->type = tokenType;
         }
-        fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, Text, line);
+        else
+        {
+          token->type = TOKEN_IDENTIFIER;
+        }
+        //fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, Text, line);
         //exit(1);
       }
       else

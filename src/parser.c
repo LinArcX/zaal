@@ -120,6 +120,75 @@ semi(void)
   match(TOKEN_SEMICOLON, ";");
 }
 
+void 
+ident(void)
+{ 
+  match(TOKEN_IDENTIFIER, "identifier"); 
+}
+
+// Parse the declaration of a variable
+void 
+var_declaration(void) 
+{
+  // Ensure we have an 'int' token followed by an identifier and a semicolon. Text now has the identifier's name. Add it as a known identifier
+  match(TOKEN_INT, "int");
+  ident();
+  addGlob(Text);
+  genglobsym(Text);
+  semi();
+}
+
+void
+print_statement(void)
+{
+  struct ASTnode *tree;
+  int reg;
+
+  // Match a 'print' as the first token
+  match(TOKEN_PRINT, "print");
+
+  // Parse the following expression and generate the assembly code
+  tree = parseExpressions(0);
+  reg = generateAST(tree);
+  genprintint(reg);
+  genfreeregs();
+
+  // Match the following semicolon and stop if we are at EOF
+  semi();
+}
+
+void 
+assignment_statement(void) 
+{
+  struct ASTnode *left, *right, *tree;
+  int id;
+
+  // Ensure we have an identifier
+  ident();
+
+  // Check it's been defined then make a leaf node for it
+  if ((id = findglob(Text)) == -1) {
+    fatals("Undeclared variable", Text);
+  }
+  right = mkastleaf(A_LVIDENT, id);
+
+  // Ensure we have an equals sign
+  match(T_EQUALS, "=");
+
+  // Parse the following expression
+  left = binexpr(0);
+
+  // Make an assignment AST tree
+  tree = mkastnode(A_ASSIGN, left, right, 0);
+
+  // Generate the assembly code for the assignment
+  genAST(tree, -1);
+  genfreeregs();
+
+  // Match the following semicolon
+  semi();
+}
+
 // Parse one or more statements
 void 
 statements(void) 
@@ -127,21 +196,27 @@ statements(void)
   struct ASTnode *tree;
   int reg;
 
-  while (1) {
-    // Match a 'print' as the first token
-    match(TOKEN_PRINT, "print");
-
-    // Parse the following expression and generate the assembly code
-    tree = parseExpressions(0);
-    reg = generateAST(tree);
-    genprintint(reg);
-    genfreeregs();
-
-    // Match the following semicolon and stop if we are at EOF
-    semi();
-    if (TOKEN_EOF == g_token.type)
+  while (1) 
+  {
+    if(TOKEN_PRINT == g_token.type)
+    {
+      print_statement();
+    }
+    else if (TOKEN_INT == g_token.type)
+    {
+      var_declaration();
+    }
+    else if (TOKEN_IDENTIFIER == g_token.type)
+    {
+      assignment_statement();
+    }
+    else if (TOKEN_EOF == g_token.type)
     {
       return;
+    }
+    else
+    {
+      fatald("Syntax error, token", g_token.type);
     }
   }
 }
