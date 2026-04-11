@@ -48,12 +48,17 @@
     - no manuall memory management needed.
   - ownership can be transfer with move().
 
-- object oriented is possible but very limited.
-  - just constructor and destructor. (to allow implemnting RAII)
-  - no operator overloading.
-  - no polymorphism.
-  - no inheritance.
-    - encourage users to use composition over inheritance.
+- zaal is not object oriented!
+
+- zaal has structs.
+  - this allows to pack variables with behaviours(functions) together.
+    - they can be public or private. (there's no protected keyword)
+  - structs has constructors/destructors.
+    - those are not implicit. users should define them explicitly.
+  - there's no operator overloading.
+  - there's no polymorphism.
+  - there's no inheritance.
+    - this encourage users to use composition over inheritance.
 
 - zaal has these types:
   - bool(1 byte), char(1 byte)
@@ -70,6 +75,16 @@
     - string: which is just an array of chars with a length -> string a = "hi". (which is equivalent to: array b = {'h', 'i'})
       - you don't need to specify the lenght. length will infer automatically when you define an array.
   - all variables should initializ by user. otherwise, a compiler error should throws an error.
+
+- zall has:
+  - for loops.
+  - while loops.
+  - if, else blocks.
+
+- zaal has std library.
+  - math
+  - strings
+  - containers like vector, map, 
 
 - there's enum in zaal. and they should have explicit types.
   - enums are not integers! and they don't cast implicitly to integers.
