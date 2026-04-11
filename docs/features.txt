@@ -3,7 +3,7 @@
 - variables should be mutable by default. (const vars)
 - use indentation (2 spaces), otherwise compile errors.
   - this prevents obfuscation.
-- zaal has namespaces. (the sign is ":" not "::" for easy typing)
+- zaal has namespaces. (the sign is "_")
 - zaal should support multithreading.
 
 - zaal has a build system that's in zaal itself!
@@ -15,6 +15,7 @@
 
 - there's no gc.
 - there's no macros.
+- there's no template.
 - there's no aliases.
 - there's no type punning.
 - there's no variable shadowing.
@@ -60,6 +61,20 @@
   - there's no inheritance.
     - this encourage users to use composition over inheritance.
 
+- operators:
+  - equality: "="
+  - less then: "<"
+  - less then equal: "<="
+  - greater then: ">"
+  - greater then equal: ">="
+  - assignment: ":"
+  - namespace: "_" (or: "|")
+  - address of owned memeory: "&"
+  - array indices: "[]"
+  - not: "!"
+
+
+
 - zaal has these types:
   - bool(1 byte), char(1 byte)
   - integers:
@@ -80,6 +95,7 @@
   - for loops.
   - while loops.
   - if, else blocks.
+    - there's no ? mechanism. (triple if)
 
 - zaal has std library.
   - math
