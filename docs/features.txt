@@ -7,11 +7,13 @@
 - zaal should support multithreading.
 
 - zaal has a build system that's in zaal itself!
+  - so you don't need to rely on third party software like make, cmake, cargo&toml, etc..
   - there's no package manger.
-  - in this way we force people to grab their dependencies and compile them by themselves.
-  - this removes the supply-chain attack.
-  - this force you to think twice: do i really need this dependency?
-    - since building a dependency has cost, you automatically just peek what you "really" want.
+    - in this way we force people to grab their dependencies and compile them by themselves.
+      - don't grab tar files, clone the source code directly. (preferably in a virtual environment)
+    - this removes the supply-chain attack.
+    - this force you to think twice: do i really need this dependency?
+      - since building a dependency has cost, you automatically just peek what you "really" want.
 
 - there's no gc.
 - there's no macros.
