@@ -1,31 +1,27 @@
-# Features
+# zen
+- avoid adding features that do the same job but in different ways.
+- simple abstraction / minimal implementaion.
+- and in general rule of thumb: any mechanism that is outside control of compiler should be minimize.
+- zaal is not object oriented!
 - identifiers should contain only english letters. (no underscore, no digits)
-- variables should be immutable by default. (const vars)
-  - for defining mutable variable, just prepend "mut" to variable definition.
-  - mutable variables can't change to immutable and vice-versa.
-- use indentation (2 spaces), otherwise compile errors.
+- variables should be immutable by default. (like const vars in c++)
+  - for defining mutable variable, just prepend "mut" to variable definitions.
+  - mutable variables can't change/cast/assign to immutable and vice-versa.
+- use indentation (2 spaces) -> otherwise compiler error.
   - this prevents obfuscation.
 - zaal has namespaces. (the sign is "::")
 - there's no gc.
+- most of the issues should be catch at compile.
+- runtime should be very small.
+- no link to any c/c++ code.
 - there's no macros.
 - there's no template.
 - there's no aliases.
 - there's no type punning.
 - there's no variable shadowing.
 - zaal should support multithreading.
-
-- zaal has a build system that's in zaal itself!
-  - so you don't need to rely on third party software like make, cmake, cargo&toml, etc..
-  - there's no package manger.
-    - in this way we force people to grab their dependencies and compile them by themselves.
-      - don't grab tar files, clone the source code directly. (preferably in a virtual environment)
-    - this removes the supply-chain attack.
-    - this force you to think twice: do i really need this dependency?
-      - since building a dependency has cost, you automatically just peek what you "really" want.
-
 - there's no support for dynamic libraries.
   - all the libraries and binaries should be build statically.
-
 - there's no exception.
   - we rely on RESULTs.
     - RESULTs should be check on caller -> otherwise a compiler error will raise.
@@ -38,83 +34,35 @@ There are 2 types of comments:
 - code comments: //
 - doc comments: ///
 
-# functions
-- each function should have at least 1 result as output. (SUCCESS or FAILED)
-- other <RET> are optional.
-- functions are private by default. you can prepend them with "pub" keyword to make them public for other modules.
-- you can have 0 or unlimited number of parameters.
-- init{}; body{}; finialize{} are 3 main mandatory part of each function.
-  - they don't infer by compiler if you omit them -> you'll get compiler error in this case.
-  - if you don't want to do anything in init{} or finizlie{}, you can leave them empty.
-  - but you can't leave the body{} part empty -> otherwise you will get compiler error.
-  - in init{}, you can allocate your resource.
-  - in finizlie{} you can release your resource.
-    - they're like constructor, destructor in OOP world.
-  - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
-
-example:
-  {pub} <FUNCTION_NAME>(<PAR1>, <PAR2>, ...)
-  {
-    // this part calls during function preparation.
-    init{}; 
-
-    // this part is the main functionality of the function.
-    body{
-      result.status = SUCCESS;
-      result.message = "";
-    };
-
-    // this part calls when function finished and wants to return back to callee
-    finilize{}; 
-  } => { result, <RET1>, <RET2>, ...};
-
-
-- there's no void function.
-  - each function should return a RESULT(which at least should have SUCCESS, ERROR)
-    - if you want to return some variables to the caller, you need to specify them at the end of the function like this:
-      RESULT test(in1, in2, in3) {
-        // body
-      } out1, out2;
-    - in case, your function doesn't return any variable to the caller, it can be like this:
-       RESULT test(in1, in2, in3) {
-        // body
-      };
-        - as you see, ";" is  necessary at the end of functions.
-      
-- memory allocation on the heap is possible, but it always returns an "owned" poiner or memory, not raw pointer.
-  - derefrencing an "owned" memory is possible.
-  - derefrencing anything else leads to compiler error. (like variables on stack, etc..)
-  - you can't allocate memory without assigning it to any variable. -> compiler error.
-    - that object, called: owned memeory variable.
-  - when owned memoery variable goes out of scope, memoery belongs to it will free automatically.
-    - no manuall memory management needed.
-  - ownership can be transfer with move().
-
-- zaal is not object oriented!
-
-- zaal has structs.
-  - this allows to pack variables with behaviours(functions) together.
-    - they can be public or private. (there's no protected keyword)
-  - structs has constructors/destructors.
-    - those are not implicit. users should define them explicitly.
-  - there's no operator overloading.
-  - there's no polymorphism.
-  - there's no inheritance.
-    - this encourage users to use composition over inheritance.
-
-- operators:
+# operators
   - equality: "="
   - less then: "<"
   - less then equal: "<="
   - greater then: ">"
   - greater then equal: ">="
   - assignment: ":"
-  - namespace: "_" (or: "|")
-  - address of owned memeory: "&"
+  - namespace: "::" (or: "|", or "_")
   - array indices: "[]"
   - not: "!"
 
-- variables
+# primitive types
+  - bool(1 byte)
+  - char(1 byte) --> it has both char value and integer value of that char.
+  - s8, (signed) u8 (unsigned), f8 (float) --> you can't use these as characters, these are just numbers.
+  - s16, u16, f16
+  - s32, u32, f32
+  - s64, u64, f64
+  - string
+  - ssize, usize
+  - array<T>
+  - vector<T>
+
+# keywords
+- if, while, for
+- addr, pt, transfer
+- pub 
+
+# variables
   - they are immutable by default.
   - if you want to have mutable variables, define them as `mut`.
 
@@ -131,49 +79,108 @@ example:
       for example this raise compiler error:
         f32 test: 12;
 
-- zaal has these types:
-  - bool(1 byte)
-  - char(1 byte) --> it has both char value and integer value of that char.
-  - s8, (signed) u8 (unsigned), f8 (float) --> you can't use these as characters, these are just numbers.
-  - s16, u16, f16
-  - s32, u32, f32
-  - s64, u64, f64
-  - string
-  - ssize, usize
-  - array<T>
-  - vector<T>
+# functions
+- each function should have at least 1 result as output. (SUCCESS or FAILED)
+- if you want to return some variables to the caller, you need to specify them at the end of the function.
+- ";" is  necessary at the end of functions.
+- other <RET> are optional.
+- functions are private by default. you can prepend them with "pub" keyword to make them public for other modules.
+- you can have 0 or unlimited number of parameters.
+- init{}; body{}; finialize{} are 3 main mandatory part of each function.
+  - they don't infer by compiler if you omit them -> you'll get compiler error in this case.
+  - if you don't want to do anything in init{} or finizlie{}, you can leave them empty.
+  - but you can't leave the body{} part empty -> otherwise you will get compiler error.
+  - in init{}, you can allocate your resource.
+  - in finizlie{} you can release your resource.
+    - they're like constructor, destructor in OOP world.
+  - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
+    - you can't set them in init{} or finialize{}
+  - you can't write code between init{}, body{}, finizlie{}
+- there's no void function.
+- there's no passing by value. just passing by immutable refrence.
+  - it should be a possiblity to pass by mutable refrence.
+ 
+example:
+  {pub} <FUNCTION_NAME> (<VAR_TYPE> <PAR1>, <VAR_TYPE> <PAR2>, ...)
+  {
+    // this part calls during function preparation.
+    init{}; 
 
-- data structures
-  - array<T>: a fixed size of consecutive items of type T.
-    - string: which is just an array of chars with a length -> string a = "hi". (which is equivalent to: array b = {'h', 'i'})
-      - you don't need to specify the lenght. length will infer automatically when you define an array.
+    // this part is the main functionality of the function.
+    body{
+      result.status = SUCCESS;
+      result.message = "";
+    };
+
+    // this part calls when function finished and wants to return back to callee
+    finilize{}; 
+  } => ( result, <VAR_TYPE> <RET1>, <VAR_TYPE> <RET2>, ...);
+
+
+# for
+
+# while
+
+# if, else
+
+# triple if(?)
+there's not such a thing in zaal.
+
+# array
+array<T>: a fixed size of consecutive items of type T.
   example:
     array<i32> testI32 : { 1, 3 };
     array<string> testString : { "Hello", "World" };
     array<char> testChar : { 'h', 'e', 'l', 'l', 'l'};
+Tip:
+  you don't need to specify the lenght. It'll infer automatically when you define an array.
 
-  - all variables should initializ by user. otherwise, a compiler error should throws an error.
+# strings
+It's just an array of chars with a length.
+exmaple:
+  string simpleString = "hi". (which is equivalent to: array<char> arrayOfChars = {'h', 'i'})
 
-- zall has:
-  - for loops.
-  - while loops.
-  - if, else blocks.
-    - there's no ? mechanism. (triple if)
+# structs
+  - this allows to pack variables with behaviours(functions) together.
+    - they can be public or private. (there's no protected keyword)
+  - structs has constructors/destructors.
+    - those are not implicit. users should define them explicitly.
+  - there's no operator overloading.
+  - there's no polymorphism.
+  - there's no inheritance.
+    - this encourage users to use composition over inheritance.
 
-- zaal has std library.
+# enums
+  - they should have explicit types -> otherwise compiler error.
+  - enums are not integers! and they don't cast implicitly to integers. -> otherwise compiler error.
+
+# build system
+zaal has a build system that you write your build script in in zaal itself!
+  - so you don't need to rely on third party software like make, cmake, cargo&toml, etc..
+  - there's no package manger.
+    - in this way we force people to grab their dependencies and compile them by themselves.
+      - don't grab tar files, clone the source code directly. (preferably in a virtual environment)
+    - this removes the supply-chain attack.
+    - this force you to think twice: do i really need this dependency?
+      - since building a dependency has cost, you automatically just peek what you "really" want.
+
+# memory allocation
+allocation on the heap is possible, but it always returns an "owned" poiner or memory, not raw pointer.
+  - derefrencing an "owned" memory is possible.
+  - derefrencing anything else leads to compiler error. (like variables on stack, etc..)
+  - you can't allocate memory without assigning it to any variable. -> compiler error.
+    - that object, called: owned memeory variable.
+  - when owned memoery variable goes out of scope, memoery belongs to it will free automatically.
+    - no manuall memory management needed.
+  - ownership can be transfer with transfer keyword.
+    pt test = allocate(10);
+    pt justAPointer = test;
+    pt transferedPointer = transfer test;
+
+# std library
   - math
   - strings
   - containers like vector, map, 
-
-- there's enum in zaal. and they should have explicit types.
-  - enums are not integers! and they don't cast implicitly to integers.
-
-- avoid adding features that do the same job but in different ways.
-- simple abstraction / minimal implementaion.
-- and in general rule of thumb: any mechanism that is outside control of compiler should be minimize.
-
-- there's no passing by value. just passing by immutable refrence.
-  - it should be a possiblity to pass by mutable refrence.
 
 # garbage
 - dynamic memory allocation should be like this:
@@ -193,7 +200,6 @@ example:
   if the variable goes out of scope, it's pointer also should goes out of scope.(this is useful when we want to pass values by refrence to reduce overhead)
   - we can't change pointer type or value to refer to other piece of memory. pointer by itself shouldn't exists.
   - access to array elements should be check at compile time and throws errors if out of bound.
-
 
 - build system/package manager should be part of the language ecosystem.(with zaal language, you could write your own build scripts)
   - package manager(simorgh) should be minimal and encourage people to read/write code instead of just be a user of libraries.
