@@ -1,4 +1,7 @@
 # zen
+- zaal compiler is stuipd. you need to tell him everything he needs to know.
+  - he doesn't "assume" anything for you.
+- there's no inference.
 - avoid adding features that do the same job but in different ways.
 - simple abstraction / minimal implementaion.
 - and in general rule of thumb: any mechanism that is outside control of compiler should be minimize.
@@ -26,8 +29,17 @@
   - we rely on RESULTs.
     - RESULTs should be check on caller -> otherwise a compiler error will raise.
     - RESULT is just a struct with 2 items:
-      "status": SUCCESS or ERROR.
-      "message": the string explains the status.
+      "status" as enum: SUCCESS or ERROR.
+      "message" as string: the string explains the status.
+      struct result
+      {
+        enum i8 status: { SUCCESS, ERROR }
+      }
+
+# keywords
+- import, pub
+- if, while, for
+- addr, ptr, transfer
 
 # comments
 There are 2 types of comments:
@@ -54,13 +66,6 @@ There are 2 types of comments:
   - s64, u64, f64
   - string
   - ssize, usize
-  - array<T>
-  - vector<T>
-
-# keywords
-- if, while, for
-- addr, pt, transfer
-- pub 
 
 # variables
   - they are immutable by default.
@@ -114,7 +119,7 @@ example:
 
     // this part calls when function finished and wants to return back to callee
     finilize{}; 
-  } => ( result, <VAR_TYPE> <RET1>, <VAR_TYPE> <RET2>, ...);
+  } -> ( result, jungle<SIZE, T, U, V, ...>);
 
 
 # for
@@ -126,14 +131,39 @@ example:
 # triple if(?)
 there's not such a thing in zaal.
 
-# array
-array<T>: a fixed size of consecutive items of type T.
+# array<T, SIZE>
+It's fixed SIZE of consecutive items of the same type T.
   example:
-    array<i32> testI32 : { 1, 3 };
-    array<string> testString : { "Hello", "World" };
-    array<char> testChar : { 'h', 'e', 'l', 'l', 'l'};
-Tip:
-  you don't need to specify the lenght. It'll infer automatically when you define an array.
+    array<i32, 2> testI32 : { 1, 3 };
+    array<string, 2> testString : { "Hello", "World" };
+    array<char, 5> testChar : { 'h', 'e', 'l', 'l', 'l'};
+  - if the size and defined items are not matching -> compiler error.
+
+# vector<T>
+it's a dynamically size of items type T.
+  example:
+    vector<string> vecString;
+    vecString.add("hello");
+    vecString.add("world");
+
+    vector<i16> vecIntegers;
+    vecIntegers.add(1);
+    vecIntegers.remove(); // remove from the end
+
+# jungle<SIZE, T, U, V, ...>
+It's fixed SIZE of consecutive items of the different types.
+  example:
+    jungle<3, i32, string, bool> myJungleVar : { 1, "cat", true };
+    myJungleVar.remove(); // it removes that last item from the jungle
+
+    jungle<2, string, string> anotherJungleVar : {"day", "night"};
+
+# map<KEY, VALUE>
+it's a sorted associative container that contains key-value pairs with unique keys.
+  example:
+    map<string, i32> mapItems{ { "CPU", 10 }, { "GPU", 15 }, { "RAM", 20 } };
+    mapItems.erase("CPU"); // this will erase the first pair
+    mapItems.append("KEYBOARD", 12); // this will append this pair to end of map
 
 # strings
 It's just an array of chars with a length.
@@ -173,14 +203,13 @@ allocation on the heap is possible, but it always returns an "owned" poiner or m
   - when owned memoery variable goes out of scope, memoery belongs to it will free automatically.
     - no manuall memory management needed.
   - ownership can be transfer with transfer keyword.
-    pt test = allocate(10);
-    pt justAPointer = test;
-    pt transferedPointer = transfer test;
+    ptr test : allocate(10);
+    ptr justAPointer : test;
+    ptr transferedPointer : transfer test;
 
 # std library
+  - io
   - math
-  - strings
-  - containers like vector, map, 
 
 # garbage
 - dynamic memory allocation should be like this:

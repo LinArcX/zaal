@@ -1,0 +1,56 @@
+/// this is doc comment
+/// main entery point of any zaal program.
+// input args, can pass as:
+//  1. const & (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
+//  2. mut & (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
+// output args are always returned as mut & and the ownership of them transfer to the callee. -> this is the default.
+main(i32 argc, string argv)->(Result result, jungle<3, i32, string, bool> output)
+{
+  // each function has already result and output passed to it.
+  // developer need to fill them.
+  // allocate memory on the heap
+  ptr myPtr: allocate(10);
+
+  // now anotherPtr points to the same address as myPtr
+  ptr anotherPtr: myPtr; //
+
+  // transfer pointer
+  ptr transferedPointer: transfer anotherPtr;
+
+  // this part calls during function preparation. 
+  // init is optional.
+  init {
+
+  };
+
+  Result printResult: printIntegers();
+  if (printResult.status = SUCCESS) {
+    result.status : SUCCESS;
+    result.message : "";
+    output : { 0, "cat", true };
+  }
+  else {
+    result.status : ERROR;
+    result.message : "Failed!";
+    output : { -1, "dog", "false" };
+  }
+
+  // this part calls when function finished and wants to return back to the callee.
+  // defer is mandatory.
+  defer {
+    delete myPtr;
+  };
+}
+
+pub printIntegers(mut i16 value)->(Result result)
+{
+  // this is a normal comment.
+  i8 myInteger : 12;
+  mut i32 myMutableInteger : 12;
+
+  print("myInteger: {}\n", myInteger);
+  println("myMutable Integer: {}, value: {}", myMutableInteger, value);
+
+  Result.status : SUCCESS;
+  Result.message : "test() failed!";
+}
