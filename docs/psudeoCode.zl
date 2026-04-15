@@ -4,7 +4,7 @@
 //  1. const & (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
 //  2. mut & (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
 // output args are always returned as mut & and the ownership of them transfer to the callee. -> this is the default.
-main(i32 argc, string argv)->(Result result, jungle<3, i32, string, bool> output)
+fn main(i32 argc, string argv)->(Result result, jungle<3, i32, string, bool> output)
 {
   // each function has already result and output passed to it.
   // developer need to fill them.
@@ -42,7 +42,7 @@ main(i32 argc, string argv)->(Result result, jungle<3, i32, string, bool> output
   };
 }
 
-pub printIntegers(mut i16 value)->(Result result)
+pub fn printIntegers(mut i16 value)->(Result result)
 {
   // this is a normal comment.
   i8 myInteger : 12;

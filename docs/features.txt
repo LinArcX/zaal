@@ -1,40 +1,33 @@
 # zen
+- simple abstraction / minimal implementaion.
+- most of the issues should be catch at compile.
+- avoid adding features that do the same job but in different ways.
 - zaal compiler is stuipd. you need to tell him everything he needs to know.
   - he doesn't "assume" anything for you.
-- there's no inference.
-- avoid adding features that do the same job but in different ways.
-- simple abstraction / minimal implementaion.
-- and in general rule of thumb: any mechanism that is outside control of compiler should be minimize.
+- any mechanism that is outside the control of a compiler should be minimize.
+  - there's no inference.
 - zaal is not object oriented!
-- identifiers should contain only english letters. (no underscore, no digits)
-- variables should be immutable by default. (like const vars in c++)
-  - for defining mutable variable, just prepend "mut" to variable definitions.
-  - mutable variables can't change/cast/assign to immutable and vice-versa.
-- use indentation (2 spaces) -> otherwise compiler error.
-  - this prevents obfuscation.
-- zaal has namespaces. (the sign is "::")
 - there's no gc.
-- most of the issues should be catch at compile.
-- runtime should be very small.
-- no link to any c/c++ code.
-- there's no macros.
+- there's no macro.
 - there's no template.
-- there's no aliases.
+- there's no alias.
 - there's no type punning.
-- there's no variable shadowing.
-- zaal should support multithreading.
-- there's no support for dynamic libraries.
-  - all the libraries and binaries should be build statically.
+- it's not possible to link with c/c++ code or any other programming langauge.
+- runtime should be very small.
+- indentation (2 spaces) is force by the compiler -> otherwise compiler error.
+  - this prevents obfuscation.
+- no support for dynamic libraries.
+  - all the libraries and binaries should statically build.
 - there's no exception.
-  - we rely on RESULTs.
-    - RESULTs should be check on caller -> otherwise a compiler error will raise.
-    - RESULT is just a struct with 2 items:
-      "status" as enum: SUCCESS or ERROR.
-      "message" as string: the string explains the status.
+  - zaal relies on error codes(Result).
+    - a Result is just a struct with 2 items:
       struct result
       {
         enum i8 status: { SUCCESS, ERROR }
+        string message: "";
       }
+    - RESULTs should be check on caller -> otherwise a compiler error will raise.
+- identifiers should contain only english letters. (no underscore, no digits)
 
 # keywords
 - import, pub
@@ -53,7 +46,8 @@ There are 2 types of comments:
   - greater then: ">"
   - greater then equal: ">="
   - assignment: ":"
-  - namespace: "::" (or: "|", or "_")
+  - namespace: "|" (or: "::, or "_")
+  - discard: "_" (to ignore the Result of a function)
   - array indices: "[]"
   - not: "!"
 
@@ -68,65 +62,88 @@ There are 2 types of comments:
   - ssize, usize
 
 # variables
-  - they are immutable by default.
-  - if you want to have mutable variables, define them as `mut`.
+  - they are immutable by default. (like const vars in c++)
+  - for defining mutable variable, just prepend "mut" to variable definitions.
+  - mutable variables can assign to immutable variables. (so they become immutable)
+    - but the opposite is not possible.
+  - there's no variable shadowing. --> it will raise a compiler error.
+  - all variables should have type --> otherwise compiler error.
+  - all variables should be initialized --> otherwise compiler error.
+  - the value should be appropriate based on the type --> otherwise compiler error.
+  - there is no hidden implicit cast during assignine variables.
+    - if any assignment can't be done due to type checking incompatibility, you will get compiler error.
+      for example this raise a compiler error:
+        f32 test: 12;
 
   exmaple:
     {mut} <VAR_TYPE> <VAR_NAME> : <VAR_VALUE>;
     i8 test : 12;
     mut i8 test2 : 23;
 
-  Tips:
-    - all variables should have type --> otherwise compiler error.
-    - all variables should be initialized --> otherwise compiler error.
-    - the value should be appropriate based on the type --> otherwise compiler error.
-    - there is no hidden implicit cast. 
-      for example this raise compiler error:
-        f32 test: 12;
-
 # functions
-- each function should have at least 1 result as output. (SUCCESS or FAILED)
-- if you want to return some variables to the caller, you need to specify them at the end of the function.
-- ";" is  necessary at the end of functions.
-- other <RET> are optional.
 - functions are private by default. you can prepend them with "pub" keyword to make them public for other modules.
-- you can have 0 or unlimited number of parameters.
-- init{}; body{}; finialize{} are 3 main mandatory part of each function.
-  - they don't infer by compiler if you omit them -> you'll get compiler error in this case.
-  - if you don't want to do anything in init{} or finizlie{}, you can leave them empty.
-  - but you can't leave the body{} part empty -> otherwise you will get compiler error.
-  - in init{}, you can allocate your resource.
-  - in finizlie{} you can release your resource.
-    - they're like constructor, destructor in OOP world.
-  - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
-    - you can't set them in init{} or finialize{}
-  - you can't write code between init{}, body{}, finizlie{}
+- there are 2 types of arguments:
+- input arguments. which can pass as:
+  1. const& (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
+  2. mut& (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
+  - you can have 0 or unlimited number of input arguments.
+- output arguments:
+  - which are always returned as mut& and the ownership of them transfer to the callee. -> this is the default.
+  - first output argument which is Result is mandatory. others are optional.
+    - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
 - there's no void function.
-- there's no passing by value. just passing by immutable refrence.
-  - it should be a possiblity to pass by mutable refrence.
+- every variable that you defined inside a function, will be destroy when function ends.
+  - no matter if they were allocated on the stack or heap.
+  - if you want to keep heap allocated variables, you need to transfer their ownership to the callee.
+- function can have defer section.
+  - it's optional.
+  - they will call when function wanted to return back to callee.
  
 example:
-  {pub} <FUNCTION_NAME> (<VAR_TYPE> <PAR1>, <VAR_TYPE> <PAR2>, ...)
+  {pub} fn <FUNCTION_NAME>(<VAR_TYPE> <IArg1>, <VAR_TYPE> <IArg2>, ...)->(Result result, jungle<SIZE, T, U, V, ..> output)
   {
-    // this part calls during function preparation.
-    init{}; 
+    result.status = SUCCESS;
+    result.message = "";
 
-    // this part is the main functionality of the function.
-    body{
-      result.status = SUCCESS;
-      result.message = "";
-    };
+    // this is optional for resurce cleanup
+    // it's alternative to got in other langauges
+    defer {
+      cleanup();
+    }
+  }
 
-    // this part calls when function finished and wants to return back to callee
-    finilize{}; 
-  } -> ( result, jungle<SIZE, T, U, V, ...>);
 
+# namespaces
+the sign is "|".
+
+define:
+  namespace <NAME> {
+
+  }
+
+usage:
+  std|io|print
 
 # for
+for(<TYPE> <COUNTER_NAME>; <CONDITION>; <COUNTER_STEP>) {
+  // some actions
+}
 
 # while
+while(<CONDITION>) {
+  // some actions
+}
 
 # if, else
+if (<CONDITION> = TRUE) {
+  // do something
+}
+else if (<CONDITION> = FALSE) {
+  // do something crazy
+}
+else {
+  // idle
+}
 
 # triple if(?)
 there's not such a thing in zaal.
@@ -179,10 +196,23 @@ exmaple:
   - there's no polymorphism.
   - there's no inheritance.
     - this encourage users to use composition over inheritance.
+  example:
+      {pub} struct <STRUCT_NAME>
+      {
+        enum i8 status: { SUCCESS, ERROR }
+      }
+
+
 
 # enums
   - they should have explicit types -> otherwise compiler error.
   - enums are not integers! and they don't cast implicitly to integers. -> otherwise compiler error.
+
+# file extensions and tools
+- .zl for zaal files.
+- zc is zaal compiler.
+- zf is zaal formatter.
+- zlsp is zaal lsp.
 
 # build system
 zaal has a build system that you write your build script in in zaal itself!
@@ -210,6 +240,9 @@ allocation on the heap is possible, but it always returns an "owned" poiner or m
 # std library
   - io
   - math
+
+# todo
+- multithreading.
 
 # garbage
 - dynamic memory allocation should be like this:
