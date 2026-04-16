@@ -2,10 +2,12 @@ p
 tags
 out
 out.*
-gmon.out
 build/*
+gmon.out
 garbage/*
 massif.out.*
 uftrace.data/*
 callgrind.out.*
+breakpoints.json
 uftrace.data.old/*
+compile_commands.json
