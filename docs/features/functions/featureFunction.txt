@@ -1,0 +1,31 @@
+# functions
+- functions are private by default. you can prepend them with "pub" keyword to make them public for other modules.
+- there are 2 types of arguments:
+- input arguments. which can pass as:
+  1. const& (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
+  2. mut& (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
+  - you can have 0 or unlimited number of input arguments.
+- output arguments:
+  - which are always returned as mut& and the ownership of them transfer to the callee. -> this is the default.
+  - first output argument which is Result is mandatory. others are optional.
+    - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
+- there's no void function.
+- every variable that you defined inside a function, will be destroy when function ends.
+  - no matter if they were allocated on the stack or heap.
+  - if you want to keep heap allocated variables, you need to transfer their ownership to the callee.
+- function can have defer section.
+  - it's optional.
+  - they will call when function wanted to return back to callee.
+ 
+example:
+  {pub} fn <FUNCTION_NAME>(<VAR_TYPE> <IArg1>, <VAR_TYPE> <IArg2>, ...)->(Result result, jungle<SIZE, T, U, V, ..> output)
+  {
+    result.status = SUCCESS;
+    result.message = "";
+
+    // this is optional for resurce cleanup
+    // it's alternative to got in other langauges
+    defer {
+      cleanup();
+    }
+  }

@@ -1,0 +1,24 @@
+# variables
+  - every variable is immutable by default. (like const vars in c++)
+  - for defining mutable variable, you need to prepend "mut" to variable definitions.
+  - mutable variables can assign to immutable variables. (so they become immutable)
+    - but the opposite is not possible.
+  - it's the opposite of c++ way of thinking that by default everything is mutable, but you endup adding consts everywhere. 
+  - there's no variable shadowing. --> it will raise a compiler error.
+  - you can't define global variables.
+    - every variable should be part of a struct or function.
+    - you need to pass your variables to other functions down to the road.
+    - by default in zaal, variables passes by const refrence.
+      - you can pass them as mutable refrence by prepending the argument with "mut" keyword.
+  - all variables should have type --> otherwise compiler error.
+  - all variables should be initialized --> otherwise compiler error.
+  - the value should be appropriate based on the type --> otherwise compiler error.
+  - there is no hidden implicit cast during assignine variables.
+    - if any assignment can't be done due to type checking incompatibility, you will get compiler error.
+      for example this raise a compiler error:
+        f32 test: 12;
+
+  exmaple:
+    {mut} <VAR_TYPE> <VAR_NAME> : <VAR_VALUE>;
+    i8 test : 12;
+    mut i8 test2 : 23;

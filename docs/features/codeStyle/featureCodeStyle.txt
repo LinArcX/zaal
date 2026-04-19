@@ -1,0 +1,24 @@
+# general
+- indentation (2 spaces) is forced by the compiler -> otherwise compiler error.
+  - this prevents obfuscation.
+
+# namespaces
+- curly brackets "{}" always start at the new line, not on the same line -> otherwise compiler error.
+
+# functions
+- between name of the function and "()" there shouldn't be any space --> otherwise compiler error.
+- curly brackets "{}" always start at the new line, not on the same line -> otherwise compiler error.
+
+# if
+- there should be an space between if and condition clause -> otherwise, compiler error.
+
+example:
+namespace mine
+{
+  function test()
+  {
+    if (theSun() eq object) {
+      // some comments
+    }
+  }
+}

@@ -1,0 +1,10 @@
+# namespaces
+the sign is ":".
+
+define:
+  namespace <NAME> {
+
+  }
+
+usage:
+  std:io:print
