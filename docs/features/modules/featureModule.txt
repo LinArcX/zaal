@@ -14,4 +14,7 @@ in zaal, we consider files as modules.
   then you can access it's public items with ".", like this:
   io.print();
 
+- modules can be inside a directory and you still can use . for accessing files(modules) inside a directory.
+  std.io.print();
+
 - note that we don't have a concept like namespace in zaal.

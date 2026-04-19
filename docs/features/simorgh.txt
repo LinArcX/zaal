@@ -1,0 +1,14 @@
+Simorgh is the build system of zaal:
+  - you can build your zaal apps in zaal scripts!
+  - unlike c, c++ ecosystem that has a lot of third party tools to build the software(make, cmake)
+    in zaal, you can use zaal language to build your software.
+  - simorgh is not a package manager. it's just a build system.
+  - actually there's no package manger in zaal eco-system and it's intentional.
+    - in this way we force people to grab their dependencies and compile them by themselves, instead of relying on third-parties.
+      which proves it can bring a lot of security flaws like supply-chain attack.
+      so we encourage you to carefully grab your dependencies by yourself.
+    - don't grab tar files, clone the source code directly. (preferably in a virtual environment)
+    - this force you to think twice: do i really need this dependency?
+      - since building a dependency has cost, you automatically just peek what you "really" want.
+
+

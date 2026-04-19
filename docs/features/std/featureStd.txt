@@ -1,0 +1,5 @@
+std is the standard library for zaal. for the moment we should have these:
+- std.io
+- std.math
+
+To implement them, we should have a directory called: "std". "io" and "math" are normal files which acts as modules.
