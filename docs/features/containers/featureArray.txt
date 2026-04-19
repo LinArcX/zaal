@@ -1,0 +1,14 @@
+# array<T, SIZE>
+It's a fixed SIZE of consecutive items of the same type T. and it's part of the standard library.
+
+You can import it like this:
+  import std:array
+
+And use it like this:
+    array<i32, 2> testI32 = { 1, 3 };
+    array<string, 2> testString = { "Hello", "World" };
+    array<char, 5> testChar = { 'h', 'e', 'l', 'l', 'l'};
+
+Tips:
+  - you need to initizlie an array when you define them. -> otherwise compiler error.
+  - if the size and defined items are not matching -> compiler error.

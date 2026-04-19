@@ -1,0 +1,18 @@
+for loops in zaal is like this:
+  for(<TYPE> <COUNTER_NAME>; <CONDITION>; <COUNTER_STEP>) {
+    // some actions
+  }
+
+  Tips:
+  each for loop has 4 sections:
+  - counter name: mandatory -> otherwise compiler error.
+  - condition: mandatory -> otherwise compiler error.
+    - conditions can't be integers, they should be booleans.
+  - counter step: mandatory -> otherwise compiler error.
+  - body: mandatory -> otherwise compiler error.
+  - you can't use "for" loops as unlimited loop:
+    for (;;) {} -> it's a compiler error!
+    instead you should use "while" loops:
+      while(true) {}
+
+

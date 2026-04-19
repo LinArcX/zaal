@@ -1,9 +1,9 @@
 # zen
 - simple abstraction / minimal implementaion.
+- no namespaces in zaal. instead we have modules. (each file is a module)
 - functions in zaal is the last layer of abstraction.
 - there's no recursion.
-- there's no switch case(just if statements)
-- there are only two forms of iteration: for & while loops.
+- there are only two forms of iteration: for loops & while loops.
 - most of the issues should be catch at compile.
 - avoid adding features that do the same job but in different ways.
 - zaal compiler is stuipd. you need to tell him everything he needs to know.
@@ -47,14 +47,13 @@ There are 2 types of comments:
 - doc comments: ///
 
 # operators
-  - equality: "eq"
-  - assignment: "="
+  - equality: "="
+  - assignment: ":"
   - less then: "<"
   - less then equal: "<="
   - greater then: ">"
   - greater then equal: ">="
   - array indices: "[]"
-  - namespace: ":" (or: "|", or "_")
   - discard: "_" (to ignore the Result of a function)
   - not: "!"
 
@@ -67,49 +66,6 @@ There are 2 types of comments:
   - s64, u64, f64
   - string
   - ssize, usize
-
-# for
-for(<TYPE> <COUNTER_NAME>; <CONDITION>; <COUNTER_STEP>) {
-  // some actions
-}
-
-# while
-while(<CONDITION>) {
-  // some actions
-}
-
-# if, else
-if (<CONDITION> = TRUE) {
-  // do something
-}
-else if (<CONDITION> = FALSE) {
-  // do something crazy
-}
-else {
-  // idle
-}
-
-# triple if(?)
-there's not such a thing in zaal.
-
-# array<T, SIZE>
-It's fixed SIZE of consecutive items of the same type T.
-  example:
-    array<i32, 2> testI32 : { 1, 3 };
-    array<string, 2> testString : { "Hello", "World" };
-    array<char, 5> testChar : { 'h', 'e', 'l', 'l', 'l'};
-  - if the size and defined items are not matching -> compiler error.
-
-# vector<T>
-it's a dynamically size of items type T.
-  example:
-    vector<string> vecString;
-    vecString.add("hello");
-    vecString.add("world");
-
-    vector<i16> vecIntegers;
-    vecIntegers.add(1);
-    vecIntegers.remove(); // remove from the end
 
 # jungle<SIZE, T, U, V, ...>
 It's fixed SIZE of consecutive items of the different types.

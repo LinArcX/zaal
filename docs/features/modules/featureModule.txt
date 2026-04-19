@@ -1,0 +1,17 @@
+in zaal, we consider files as modules.
+- modules are high level entities for code resue.
+- modules can contains:
+  functions
+  structs
+  variables
+
+- everything in a module is private by default.
+  unless you define them as publick by prepending them with "pub" keyword.
+
+- to access modules, first you need to import them:
+  import io;
+
+  then you can access it's public items with ".", like this:
+  io.print();
+
+- note that we don't have a concept like namespace in zaal.

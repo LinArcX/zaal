@@ -1,0 +1,23 @@
+- there's no ternary operator in zaal (?)
+  condition ? true-value : false-value
+
+- there's no switch case(just if statements)
+
+- we have only "if, else" conditions
+  example:
+  if (<CONDITION> = TRUE) {
+    // do something
+  }
+  else if (<CONDITION> = FALSE) {
+    // do something crazy
+  }
+  else {
+    // idle
+  }
+
+  Tips:
+  - conditions can't be integers, they should be booleans.
+  - "else" and "else if" can't appear only. they appear only if there's an "if" before them.
+  - "if" can comes alone.
+  - "if" then "else" can come together without any "else if" in the middle.
+  - "if" then "else if" can come together without any "else" part at the end -> need to think more!

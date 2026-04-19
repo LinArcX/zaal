@@ -1,0 +1,20 @@
+# vector<T>
+A dynamically container of items of the same size (type T). and it's part of the standard library.
+
+You can import it like this:
+  import std:vector
+
+And use it like this:
+    vector<string> vecString;
+    vecString.isEmpty(); // true
+    vecString.add("hello");
+    vecString.add("world");
+    vecString.isEmpty(); // false
+
+    vector<i16> vecIntegers;
+    vecIntegers.add(1);
+    vecIntegers.remove(); // remove from the end
+
+Tips:
+  - seems the nature of vectors are dynamic, then can define without assigning any value to them. in this case the vector is empty.
+  - if you add an item with different type -> you get compiler error.
