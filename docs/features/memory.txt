@@ -1,0 +1,160 @@
+# memory
+- each process on operating system has it's own memory address space. (stack + heap)
+  - processes can't access the heap(or stack) from other processes. if they want to share data, they should use IPC techniques.
+- each process can have different threads.
+  - each thread has it's own stack.
+  - threads inside a process use the same heap.
+
+- each function has it's own stack frame.
+  - inside functions you can use memory from the heap.
+
+- stack: is a LIFO data structure. and it increase downward in memory region. 
+  - memory allocated on stack goes out of scope automatically when the function returns.
+  - any pointer to local variables are invalid after function return.
+  - if you allocate huge amount of data on stack, you'll have stack overflow.
+
+- heap: is huge junk of memory that doesn't have any layout. it increases upward in process memory region.
+  - it's the job of allocators to efficiently allocate/deallocate memory from it.
+  - heap can be easily fragmented when a lot of allocation happen on it.
+  - allocation on heap has cost. (finding the free portiont, fragmentation, etc..) -> it's vary based on time, so it's not deterministic.
+  - when you allocated on heap, you're responsible to de-allocate, otherwise you will have memory leak in your process.
+
+## diagram
+  int B(int array y)
+  {
+    print(y[0]); // 1
+  }
+  
+  int A(int a, int b)
+  {
+    int x;
+    heap int array y = {1, 2};
+    B(y);
+  }
+
+[     Higher addresses   ]
+↑                        ↑ 
++---------- Fun A -------+
+|      Caller frame      |
+|         arg b          |
+|         arg a          |
+|      return addr       |
+|       saved RBP        |
+|       local sum        |
+|       ... (SP)         |
++--------- Fun B --------+
+|      Caller frame      |
+|         arg y          |
+|      return addr       |
+|       saved RBP        |
+|       local sum        |
+|       ... (SP)         |
+|          ↓↓↓           |
+|          ...           |
+|          ...           |
+|          ...           |   // stack and heap are fighting for memory :)
+|          ...           |
+|          ...           |
+|          ↑↑↑           |
++------------------------+
+|   older stack frames   |
++------------------------+
+|    (unused VA gap)     |
++------------------------+
+|    mmap / shared lib   |
++------------------------+
+|          Heap ↑        |
+|   [malloc blocks...]   |
+|   allocator metadata   |
++------------------------+
+| .bss / .data / .rodata |
++------------------------+
+|        Text (code)     |
++------------------------+
+↓                        ↓ 
+[    Lower addresses     ]
+
+
+# zaal memory management
+- we can't only rely on stack for memory.(otherwise we easily get stackoverflow) we "need" heap for large mount of data.
+- but we need to be sure that allocation on the heap doesn't introduce all types of heap allocation issues.
+
+zaal memory allocation will be like this:
+- all types of data define on stack by default.
+- if you want to allocate them on heap, just prepend the declaration with "heap" keyword.
+  example:
+    int a; // allocated on stack
+    heap int b; // allocated on heap
+    heap array<int> myArray : {1, 2}; // allocated on heap
+    array<int> myArray : {1, 2}; // allocated on stack
+
+- passing data to child functions is "const refrence" by default.
+  - if you want to mutate data in child functions, prepnd data as "mut"
+    void test() {
+      array a<int> : {1, 2};
+      myFunc(mut a); // mutable stack refrence
+
+      heap array b<int> : {1, 2};
+      myFunc(mut b); // mutable heap refrence
+
+      int c : 1;
+      myFunc(a); // const stack refrence
+    }
+  - there's no copy when you pass variable to another function. (it's always either: "const refrence" or "mut refrence")
+
+- you can pass heap allocated data to parent functions.
+  - to do that, you need to transfer the ownership of those data.
+  - stack allocated CAN'T be pass to parent functions --> compiler error!
+
+- all variables (no matter on stack or heap), will destroy when the function goes out of scope.
+  - if you want to keep the heap memory, when you pass the variable, you need to transfer the ownership.
+    void test() {
+      heap array a<int> : {1, 2}
+      myFunc(transfer a); // transfer ownership to a child
+    }
+
+    void testTwo(array &a) {
+      heap array b<int> : {1, 2}
+      a = transfer b; // transfer ownership to parent
+    }
+  - you CAN'T transfer the ownership of stack data. this concept is just for heap allocated data.
+    - because stack data will destroy automatically when function ends.
+
+- ownership of data variables are tied to the function surrunding to them.
+  - when the function ends, all heap data will be deallocate(unless you transfer their ownership!)
+- heap allocated data, contains these metadata:
+  - the owned function name.
+  - first function used this memoery & latest function used this memory.
+- derefencing any type of variable is possible. (if it's heap allocated to stack allocated)
+  - derefencing can never leads to errors, because:
+    - you can't derefnce an out of scope stack variable -> compiler error.
+    - you can't derence a heap allocated varible that is no longer exists -> compiler error.
+- you can't allocate memory without assigning it to any variable. -> compiler error.
+  - that object, called: owned memeory variable.
+- when owned memoery variable goes out of scope, memoery belongs to it will free automatically. (unless you transfer the ownership to another function)
+  - no manuall memory management needed.
+- ownership can be transfer with "transfer" keyword.
+  ptr test : allocate(10);
+  ptr justAPointer : test;
+  ptr transferedPointer : transfer test;
+
+
+
+allocation on the heap is possible, but it always returns an "owned" poiner or memory, not raw pointer.
+- dynamic memory allocation should be like this:
+  - first we look at the type of variable and reserver chunk of memory based on it's type.
+  - variables can ask more memory by calling: more_memory(), what will happen is:
+    - we should check if there are free enough blocks of memory ahead of us. and check how much memory asked by use.
+    if asked memroy is less than memory ahead of use, 
+    we just update the internal pointer property of our variable. it's not like malloc() in c that returns pointer.
+    there's no direct pointer mechanism in zaal.
+    at the end you just receive a result ojbect.
+    - if the desired memory is more than ahed of memory, we need to look for a chunk of memory on RAM that has enough memory.
+    and allocate that much. and just update the first and last address of pointers.
+
+- no direct pointer creation, instead each variable/function should have two pointer attached to it as his property.
+  - one for the beginning of the variable's memory.
+  - one for the end of variable's memory.
+  if the variable goes out of scope, it's pointer also should goes out of scope.(this is useful when we want to pass values by refrence to reduce overhead)
+  - we can't change pointer type or value to refer to other piece of memory. pointer by itself shouldn't exists.
+  - access to array elements should be check at compile time and throws errors if out of bound.

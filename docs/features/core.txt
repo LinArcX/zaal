@@ -20,6 +20,7 @@
 - there's no template.
 - there's no alias.
 - there's no type punning.
+- functions and variables should have metadata explaining what are their behaviour/features they have on compile time and runtime.
 - it's not possible to link with c/c++ code or any other programming langauge.
 - runtime should be very small.
 
@@ -72,19 +73,6 @@ There are 2 types of comments:
 - zc is zaal compiler.
 - zf is zaal formatter.
 - zlsp is zaal lsp.
-
-# memory allocation
-allocation on the heap is possible, but it always returns an "owned" poiner or memory, not raw pointer.
-  - derefrencing an "owned" memory is possible.
-  - derefrencing anything else leads to compiler error. (like variables on stack, etc..)
-  - you can't allocate memory without assigning it to any variable. -> compiler error.
-    - that object, called: owned memeory variable.
-  - when owned memoery variable goes out of scope, memoery belongs to it will free automatically.
-    - no manuall memory management needed.
-  - ownership can be transfer with transfer keyword.
-    ptr test : allocate(10);
-    ptr justAPointer : test;
-    ptr transferedPointer : transfer test;
 
 # todo
 - multithreading.
