@@ -2,12 +2,14 @@
 - simple abstraction / minimal implementaion.
 - no namespaces in zaal. instead we have modules. (each file is a module)
 - functions in zaal is the last layer of abstraction.
-- there's no recursion.
+- there's no recursion allowed.
+  - it prevents stackoverflow.
+  - it prevent reading code more understandable.
 - there are only two forms of iteration: for loops & while loops.
-- most of the issues should be catch at compile.
-- avoid adding features that do the same job but in different ways.
+- most of the errors should be catch at compile.
+- avoid adding million features taht do the same things but in different ways!
 - zaal compiler is stuipd. you need to tell him everything he needs to know.
-  - he doesn't "assume" anything for you.
+  - he doesn't "assume" anything for you. maybe just in few cases.
 - any mechanism that is outside the control of a compiler should be minimize.
   - there's no inference.
 - zaal is not object oriented!
@@ -39,8 +41,9 @@
 
 # keywords
 - import, pub
-- if, while, for
-- addr, ptr, transfer
+- fn, if, while, for, enum, struct
+- addr, heap, transfer
+- defer
 
 # comments
 There are 2 types of comments:
@@ -48,7 +51,12 @@ There are 2 types of comments:
 - doc comments: ///
 
 # operators
+  - dot: .
+    to access functions inside a module.
+    to access data inside struct/enum.
+    to call functions on containers(vecotr, heap, array, ...) -> which are modules again :)
   - equality: "="
+    to compare two numbers(float, int, double)
   - assignment: ":"
   - less then: "<"
   - less then equal: "<="
@@ -66,6 +74,9 @@ There are 2 types of comments:
   - s32, u32, f32
   - s64, u64, f64
   - string
+    It's just an array of chars with a length.
+    exmaple:
+      string simpleString = "hi". (which is equivalent to: array<char> arrayOfChars = {'h', 'i'})
   - ssize, usize
 
 # file extensions and tools
@@ -73,53 +84,11 @@ There are 2 types of comments:
 - zc is zaal compiler.
 - zf is zaal formatter.
 - zlsp is zaal lsp.
+- zrepl: zaal read/evaluate/print/loop.
 
 # todo
+- generics
 - multithreading.
-
-# strings
-It's just an array of chars with a length.
-exmaple:
-  string simpleString = "hi". (which is equivalent to: array<char> arrayOfChars = {'h', 'i'})
-
-# enums
-  - it defines a set of named constant values.
-  - they should have explicit types -> otherwise compiler error.
-    - acceptable types: s8, u8, s16, u16, s32, u32, s64, u64
-  - enums are not integers! and they don't cast implicitly to integers. -> otherwise compiler error.
-
-# map<KEY, VALUE>
-it's a sorted associative container that contains key-value pairs with unique keys.
-  example:
-    map<string, i32> mapItems{ { "CPU", 10 }, { "GPU", 15 }, { "RAM", 20 } };
-    mapItems.erase("CPU"); // this will erase the first pair
-    mapItems.append("KEYBOARD", 12); // this will append this pair to end of map
-
-# structs
-  - it's an aggregator type that can hold differnt types of data.
-  - this allows to pack variables with behaviours(functions) together.
-    - they can be public or private. (there's no protected keyword)
-  - struct padding SHOULD NOT be hidden and implict. it should be explicit.
-    - if you compile for 64 bit systems, struct padding is 8 bytes.
-    - if you compile for 32 bit systems, padding is 4 bytes.
-    - compiler should stop you from compiling is alignment is not met.
-    - you can pad the struct manually by creating the fake bytes, or you can use a function provided by standard library called: pad(NUMBER)
-      which accepts a number as argument
-        (1, 2, 3) --> For 32 bit system.
-        (1, 2, 3, 4, 5, 6, 7) --> for 64 bit systems.
-  example:
-      {pub} struct <STRUCT_NAME>
-      {
-        enum i8 status: { SUCCESS, ERROR }
-      }
-
-# jungle<SIZE, T, U, V, ...>
-It's fixed SIZE of consecutive items of the different types.
-  example:
-    jungle<3, i32, string, bool> myJungleVar : { 1, "cat", true };
-    myJungleVar.remove(); // it removes that last item from the jungle
-
-    jungle<2, string, string> anotherJungleVar : {"day", "night"};
 
 # links
 - https://en.wikipedia.org/wiki/Z%C4%81l

@@ -1,0 +1,5 @@
+# enums
+  - it defines as a set of named constant values.
+  - they should have explicit types -> otherwise compiler error.
+    - acceptable types: s8, u8, s16, u16, s32, u32, s64, u64
+  - enums are not integers! and they don't cast implicitly to integers. -> otherwise compiler error.

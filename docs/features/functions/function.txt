@@ -1,31 +1,61 @@
 # functions
 - functions are private by default. you can prepend them with "pub" keyword to make them public for other modules.
 - there are 2 types of arguments:
-- input arguments. which can pass as:
-  1. const& (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
-  2. mut& (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
-  - you can have 0 or unlimited number of input arguments.
-- output arguments:
-  - which are always returned as mut& and the ownership of them transfer to the callee. -> this is the default.
-  - first output argument which is Result is mandatory. others are optional.
-    - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
+  - input:
+    - always comes as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
+    - you can have 0 or unlimited number of input arguments.
+  - output:
+    - if it's allocated on heap: it pass as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
+      - not that in this case, this output argument should take the ownership of the variable -> otherwise, compiler error!
+    - otherwise it's a copy from the calle function's variable.
+    - first output argument(Result)is mandatory. (it's allocated on stack) others are optional.
+      - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
 - there's no void function.
+- there's no return keyword.
 - every variable that you defined inside a function, will be destroy when function ends.
   - no matter if they were allocated on the stack or heap.
-  - if you want to keep heap allocated variables, you need to transfer their ownership to the callee.
-- function can have defer section.
-  - it's optional.
+  - if you want to keep heap allocated variables, you need to transfer their ownership to the callee or it's parent function.
+- functions can have defer section.
+  - it's optional. (for whatever you want to do at the end of function lifecycle)
   - they will call when function wanted to return back to callee.
- 
-example:
-  {pub} fn <FUNCTION_NAME>(<VAR_TYPE> <IArg1>, <VAR_TYPE> <IArg2>, ...)->(Result result, jungle<SIZE, T, U, V, ..> output)
-  {
-    result.status = SUCCESS;
-    result.message = "";
 
+  {pub} fn <FUNCTION_NAME>(<VAR_TYPE> intputArgOne, <VAR_TYPE> inputArgTwo, ...)->(Result result, {heap} <VAR_TYPE> outputArgOne)
+  {
     // this is optional for resurce cleanup
-    // it's alternative to got in other langauges
+    // it's alternative to goto in other langauges
     defer {
       cleanup();
     }
+  }
+
+example:
+  pub fn test(int a, mut int b)->(Result result, int a, heap struct myStruct, mut heap array<i32, 2> myArray)
+  {
+    // a comes as const refrence, b as mut refrence
+    a = 12;     // compiler error
+    printf(a);  // OK
+
+    b = 23;     // OK
+    printf(b);  // OK
+
+    // prepare output data
+    // myStruct is heap allocated, transfer as const refrence to the parent.
+    heap struct myStruct
+    {
+      mut enum i8 status: { WIN, LOOS };
+      mut i32 live: 12;
+    }
+    myStruct.status: WIN;
+    myStruct.live: 18;
+
+    // myArray is heap allocated, transfer as mut refrence to the parent.
+    mut heap array<i32, 2> myArray = { 1, 3 };
+ 
+    if (a = myArray[0]) {
+      print("Horray!");  // some comments
+    }
+
+    // result will pass as copy to parent function.
+    result.status = SUCCESS;
+    result.message = "";
   }

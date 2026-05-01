@@ -122,9 +122,6 @@ zaal memory allocation will be like this:
 
 - ownership of data variables are tied to the function surrunding to them.
   - when the function ends, all heap data will be deallocate(unless you transfer their ownership!)
-- heap allocated data, contains these metadata:
-  - the owned function name.
-  - first function used this memoery & latest function used this memory.
 - derefencing any type of variable is possible. (if it's heap allocated to stack allocated)
   - derefencing can never leads to errors, because:
     - you can't derefnce an out of scope stack variable -> compiler error.
@@ -133,28 +130,12 @@ zaal memory allocation will be like this:
   - that object, called: owned memeory variable.
 - when owned memoery variable goes out of scope, memoery belongs to it will free automatically. (unless you transfer the ownership to another function)
   - no manuall memory management needed.
-- ownership can be transfer with "transfer" keyword.
-  ptr test : allocate(10);
-  ptr justAPointer : test;
-  ptr transferedPointer : transfer test;
-
-
-
-allocation on the heap is possible, but it always returns an "owned" poiner or memory, not raw pointer.
-- dynamic memory allocation should be like this:
-  - first we look at the type of variable and reserver chunk of memory based on it's type.
-  - variables can ask more memory by calling: more_memory(), what will happen is:
-    - we should check if there are free enough blocks of memory ahead of us. and check how much memory asked by use.
-    if asked memroy is less than memory ahead of use, 
-    we just update the internal pointer property of our variable. it's not like malloc() in c that returns pointer.
-    there's no direct pointer mechanism in zaal.
-    at the end you just receive a result ojbect.
-    - if the desired memory is more than ahed of memory, we need to look for a chunk of memory on RAM that has enough memory.
-    and allocate that much. and just update the first and last address of pointers.
-
-- no direct pointer creation, instead each variable/function should have two pointer attached to it as his property.
-  - one for the beginning of the variable's memory.
-  - one for the end of variable's memory.
-  if the variable goes out of scope, it's pointer also should goes out of scope.(this is useful when we want to pass values by refrence to reduce overhead)
-  - we can't change pointer type or value to refer to other piece of memory. pointer by itself shouldn't exists.
-  - access to array elements should be check at compile time and throws errors if out of bound.
+- ownership can be transfer with "transfer" keyword. (ownership tied to functions not variables!)
+  heap test : allocate(10); // OK
+  heap testTwo : test;      // compiler error! two objects can't point to the same memory address.
+  heap testThree : transfer test; // compiler error! you should transfer ownership to either child or parent function.
+- heap allocated data, contains these metadata:
+  - the address on the heap.
+  - the lenght of the allocated memory on the heap.
+  - the owned function name.
+  - first/last functions used this memoery.

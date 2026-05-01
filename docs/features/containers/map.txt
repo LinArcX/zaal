@@ -1,0 +1,6 @@
+# map<KEY, VALUE>
+it's a sorted associative container that contains key-value pairs with unique keys.
+  example:
+    map<string, i32> mapItems{ { "CPU", 10 }, { "GPU", 15 }, { "RAM", 20 } };
+    mapItems.erase("CPU"); // this will erase the first pair
+    mapItems.append("KEYBOARD", 12); // this will append this pair to end of map
