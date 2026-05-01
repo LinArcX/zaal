@@ -1,7 +1,0 @@
-# jungle<SIZE, T, U, V, ...>
-It's fixed SIZE of consecutive items of the different types.
-  example:
-    jungle<3, i32, string, bool> myJungleVar : { 1, "cat", true };
-    myJungleVar.remove(); // it removes that last item from the jungle
-
-    jungle<2, string, string> anotherJungleVar : {"day", "night"};

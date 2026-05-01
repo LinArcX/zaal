@@ -1,11 +1,16 @@
 /// this is doc comment
 /// main entery point of any zaal program.
-// input args, can pass as:
-//  1. const & (the refrence of main object will transfer to the function. but you can't change it) -> this is the default.
-//  2. mut & (the refrence of mani object will transfer but you can change the value.) -> by prepending the keywork "mut" to each input args.
-// output args are always returned as mut & and the ownership of them transfer to the callee. -> this is the default.
+//    input args:
+//      - always comes as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
+//      - you can have 0 or unlimited number of input arguments.
+//    output args:
+//      - if it's allocated on heap: it pass as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
+//        - note that in this case, this output argument should take the ownership of the variable -> otherwise, compiler error!
+//      - otherwise it's a copy from the variables inside the function itself.
+//      - first output argument(Result) is mandatory. (it's allocated on stack) others are optional.
+//        - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
 
-fn main(i32 argc, string argv)->(Result result, jungle<3, i32, string, bool> output)
+fn main(i32 argc, string argv)->(Result result, struct<3, i32, string, bool> output)
 {
   // each function has already result and output passed to it.
   // developer need to fill them.

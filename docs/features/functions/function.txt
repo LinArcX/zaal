@@ -6,9 +6,9 @@
     - you can have 0 or unlimited number of input arguments.
   - output:
     - if it's allocated on heap: it pass as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
-      - not that in this case, this output argument should take the ownership of the variable -> otherwise, compiler error!
-    - otherwise it's a copy from the calle function's variable.
-    - first output argument(Result)is mandatory. (it's allocated on stack) others are optional.
+      - note that in this case, this output argument should take the ownership of the variable -> otherwise, compiler error!
+    - otherwise it's a copy from the variables inside the function itself.
+    - first output argument(Result) is mandatory. (it's allocated on stack) others are optional.
       - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
 - there's no void function.
 - there's no return keyword.

@@ -1,7 +1,6 @@
 # structs
   - it's an aggregator type that can hold differnt types of data.
-  - this allows to pack variables with behaviours(functions) together.
-    - they can be public or private. (there's no protected keyword)
+  - you can't add functions to struct. just PDO.
   - struct padding SHOULD NOT be hidden and implict. it should be explicit.
     - if you compile for 64 bit systems, struct padding is 8 bytes.
     - if you compile for 32 bit systems, padding is 4 bytes.
@@ -10,8 +9,16 @@
       which accepts a number as argument
         (1, 2, 3) --> For 32 bit system.
         (1, 2, 3, 4, 5, 6, 7) --> for 64 bit systems.
-  example:
-      {pub} struct <STRUCT_NAME>
-      {
-        enum i8 status: { SUCCESS, ERROR }
-      }
+
+example:
+  {pub} struct <STRUCT_NAME>
+  {
+    enum i8 status : { SUCCESS, ERROR }
+    string name;
+    i32 value;
+    bool isValid;
+  }
+
+# maybe
+- this allows to pack variables with behaviours(functions) together.
+  - they can be public or private. (there's no protected keyword)
