@@ -3,52 +3,73 @@
 //    input args:
 //      - always comes as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
 //      - you can have 0 or unlimited number of input arguments.
+//      - to transfer the ownership, prepend argument with "transfer" keyword.
+//        - in this case it just changes metadata.ownedFunc of transfered object.
 //    output args:
-//      - if it's allocated on heap: it pass as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
-//        - note that in this case, this output argument should take the ownership of the variable -> otherwise, compiler error!
-//      - otherwise it's a copy from the variables inside the function itself.
-//      - first output argument(Result) is mandatory. (it's allocated on stack) others are optional.
-//        - you should set result.status and result.message in your body -> otherwise you'll get a compiler error.
-
-fn main(i32 argc, string argv)->(Result result, struct<3, i32, string, bool> output)
+//      - if it's a heap data: it pass as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
+//        - note that in this case:
+//          - ownership will transfer by default. (and you can't do anything about it)
+//      - if it's a stack data: a copy from the variables inside the function will pass to parent function.
+//      - first output argument: `stack bool status` is mandatory (if you don't set the value to it -> compiler error)
+//      - other output arguments are optional.
+fn main(i32 argc, string argv)->(stack bool status, mut heap array<i32> outputArray)
 {
-  // each function has already result and output passed to it.
-  // developer need to fill them.
+  // this optional part calls during function preparation. 
+  init {};
+
   // allocate memory on the heap
-  ptr myPtr: allocate(10);
+  heap ptr myPtr: allocate(10);
 
-  // now anotherPtr points to the same address as myPtr
-  ptr anotherPtr: myPtr; //
+  // compiler error! only one variable can point to a heap location.
+  heap ptr anotherPtr: myPtr; 
 
-  // transfer pointer
-  ptr transferedPointer: transfer anotherPtr;
+  // compiler error! you can't transfer ptr to another ptr. just to another function.
+  heap ptr transferedPointer: transfer anotherPtr; 
 
-  // this part calls during function preparation. 
-  // init is optional.
-  init {
-
-  };
-
-  Result printResult: printIntegers();
-  if (printResult.status = SUCCESS) {
-    result.status : SUCCESS;
-    result.message : "";
-    output : { 0, "cat", true };
+  stack bool statusPrintIntegers: printIntegers();
+  if (statusPrintIntegers = true) {
+    status: true;
+    outputArray : { 0, 1, 2 };
   }
   else {
-    result.status : ERROR;
-    result.message : "Failed!";
-    output : { -1, "dog", "false" };
+    status: false;
+    outputArray: { -1, -2, -3 };
   }
 
-  // this part calls when function finished and wants to return back to the callee.
-  // defer is mandatory.
-  defer {
-    delete myPtr;
-  };
+  // this optional part calls when function finished and wants to return back to the caller.
+  defer {};
 }
 
-pub fn printIntegers(mut i16 value)->(Result result)
+pub fn functionWithoutInputArg()->(stack bool status)
+{
+  stack array<i8> a: {1, 2};
+
+  // compiler error! can't transfer variables on stack!
+  myFunc(transfer mut a); 
+
+  heap array<i32> b: {1, 2};
+
+  // OK -> pass as mut refrence without transfering ownership.
+  myFunc(mut b);
+
+  // OK -> b still accessible in this function.
+  print(b[0]); 
+
+  // OK -> pass as mut refrence by transfering ownership.
+  myFunc(transfer mut b); 
+
+  // compiler error! b is transfered!
+  print(b[0]); 
+
+  stack i32 myInt: 1;
+
+  // OK -> pass as stack const refrence
+  myFunc(myInt); 
+
+  status: true;
+}
+
+pub fn functionWithOneInputArg(mut i16 value)->(Result result)
 {
   // this is a normal comment.
   i8 myInteger : 12;
@@ -59,4 +80,62 @@ pub fn printIntegers(mut i16 value)->(Result result)
 
   Result.status : SUCCESS;
   Result.message : "test() failed!";
+}
+
+fn parent()->(stack Result result)
+{
+  stack Result res,
+  owned heap array<i32> numbers = transferOwnershipToParent();
+
+  print(numbers[1]); // 2
+
+  result.status: OK;
+  result.message: "success";
+}
+
+// note that inside the function, you should define:
+//  - a stack allocated Result called result --> otherwise, compiler error.
+//    - a copy from the it will create and pass as result to the parent function.
+//  - a heap allocaetd array<i32> called numbers --> otherwise, compiler error.
+//    - it will pass as const refrence and ownwershipt will transfer automatically to parent function.
+fn transferOwnershipToParent()->(stack Result result, heap array<i32> numbers)
+{
+  // it will automatically transfer the ownership to output arg 'numbers'
+  numbers : {1, 2}; 
+
+  result.status: OK;
+  result.message: "success";
+}
+
+fn transferOwnershipToChild()->(stack |bool status, string msg|)
+{
+  heap array numbers<i32> : {-1, 232};
+
+  // transfer ownership of numbers to a childAcceptArrayAndOwnIt()
+  //  metadata.ownedFunc of numbers will change to: childAcceptArrayAndOwnIt
+  // transfer heap data make it transfer as mutable refrence.
+  stack |bool statusChild, string msgChild| = childAcceptArrayAndOwnIt(transfer numbers);
+  if (statusChild = false) {
+    print("message: {}", msgChild);
+  }
+  else {
+    print(numbers[0]); // numbers transfered, compiler error!
+  }
+
+  defer {
+    status: true;
+    msg: "success":
+  };
+}
+
+fn childAcceptArrayAndOwnIt(owned heap array numbers<i32>)->(stack bool status)
+{
+  // numbers came as const refrence
+  print(numbers[0]); // -1
+  print(numbers[3]); // compiler error -> out of range!
+
+  status: false;
+  msg: "Failed!":
+
+  // numbers didn't transfer anywhere --> it will deallocate automatically :)
 }

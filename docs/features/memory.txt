@@ -90,7 +90,7 @@ zaal memory allocation will be like this:
 
 - passing data to child functions is "const refrence" by default.
   - if you want to mutate data in child functions, prepnd data as "mut"
-    void test() {
+    pub fn test() {
       array a<int> : {1, 2};
       myFunc(mut a); // mutable stack refrence
 
@@ -108,12 +108,12 @@ zaal memory allocation will be like this:
 
 - all variables (no matter on stack or heap), will destroy when the function goes out of scope.
   - if you want to keep the heap memory, when you pass the variable, you need to transfer the ownership.
-    void test() {
+    fn test() {
       heap array a<int> : {1, 2}
       myFunc(transfer a); // transfer ownership to a child
     }
 
-    void testTwo(array &a) {
+    fn testTwo(array &a) {
       heap array b<int> : {1, 2}
       a = transfer b; // transfer ownership to parent
     }
@@ -135,7 +135,8 @@ zaal memory allocation will be like this:
   heap testTwo : test;      // compiler error! two objects can't point to the same memory address.
   heap testThree : transfer test; // compiler error! you should transfer ownership to either child or parent function.
 - heap allocated data, contains these metadata:
-  - the address on the heap.
-  - the lenght of the allocated memory on the heap.
-  - the owned function name.
-  - first/last functions used this memoery.
+  - address: the address on the heap.
+  - length: the lenght of the allocated memory on the heap.
+  - ownedFunc: the owned function name. (when you transfer a function, this property will change)
+  - firstFunc: first functions used this memoery.
+  - lastFunc: last functions used this memoery.
