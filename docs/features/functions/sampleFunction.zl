@@ -12,13 +12,33 @@
 //      - if it's a stack data: a copy from the variables inside the function will pass to parent function.
 //      - first output argument: `stack bool status` is mandatory (if you don't set the value to it -> compiler error)
 //      - other output arguments are optional.
-fn main(i32 argc, string argv)->(stack bool status, mut heap array<i32> outputArray)
+fn main(i32 argc, string argv)->(stack bool status, heap mut array<i32> outputArray)
 {
   // this optional part calls during function preparation. 
   init {};
 
   // allocate memory on the heap
-  heap ptr myPtr: allocate(10);
+  // note that metadata should be provided -> otherwise compiler error
+  .meta { 
+    type: ptr,
+    allocatedOnHeap: true,
+
+    compTime.mutable: false,
+    compTime.initValue: nullptr,
+ 
+    runtime.mutable: false,
+    runtime.initValue: nullptr,
+  }
+  data myPtr;
+
+  //myPtr.meta.type: ptr;
+  //myPtr.meta.initValue: nullptr;
+  //myPtr.meta.allocatedOnHeap: true;
+  //myPtr.meta.compTime.mutable: false;
+  //myPtr.meta.runtime.mutable: false;
+
+
+  myPtr: allocate(10);
 
   // compiler error! only one variable can point to a heap location.
   heap ptr anotherPtr: myPtr; 
