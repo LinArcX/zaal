@@ -1,5 +1,3 @@
-/// this is doc comment
-/// main entery point of any zaal program.
 //    input args:
 //      - always comes as const refrence by default. (if you want to mutate them, prepend them with "mut" keyword)
 //      - you can have 0 or unlimited number of input arguments.
@@ -12,79 +10,164 @@
 //      - if it's a stack data: a copy from the variables inside the function will pass to parent function.
 //      - first output argument: `stack bool status` is mandatory (if you don't set the value to it -> compiler error)
 //      - other output arguments are optional.
-fn main(i32 argc, string argv)->(stack bool status, heap mut array<i32> outputArray)
-{
-  // this optional part calls during function preparation. 
-  init {};
 
-  // allocate memory on the heap
-  // note that metadata should be provided -> otherwise compiler error
-  .meta { 
-    type: ptr,
-    allocatedOnHeap: true,
 
-    compTime.mutable: false,
-    compTime.initValue: nullptr,
- 
-    runtime.mutable: false,
-    runtime.initValue: nullptr,
+/// main function is the entery point of any zaal program.
+/// it's output arg is special, since it returns to os, it should be i32.
+.metadata { 
+  inputArgs: [stack i32 argc, stack string argv], // should be inject by compiler by default and can't be override -> otherwise compiler error
+  outputArgs: [stack i32 result],                 // should be inject by compiler by default and can't be override -> otherwise compiler error
+  public: true,                                   // private functions are not visible outside a moudle.
+
+  // optional things happening before entering to the first line of the funtion.
+  beforeInit: {
+
+  } 
+
+  // optional things happening just before funtion ends. (it's like defer in other languages)
+  beforeEnd: {
+
   }
-  data myPtr;
+}
+function main
+{
+  // allocate memory on the heap (on runtime for sure!)
+  // note that metadata should be provided -> otherwise compiler error
+  .metadata { 
+    type: ptr,                    // if you forget to set -> compiler error!
+    pointTo: heap                 // or it can be a stack variable.
+    pointerSize: 4                // every pointer is an i32.(4Byte) should be set by compiler -> compiler error!
+    memorySize: sizeof(i32) * 32, // 32*4 Byte. size of memory address this pointer points to it.
+                                  // if you forget to set -> compiler error!
+                                  // it the pointTo is a stack variable, memorySize should be set by compiler: sizeof(stackVar)
 
-  //myPtr.meta.type: ptr;
-  //myPtr.meta.initValue: nullptr;
-  //myPtr.meta.allocatedOnHeap: true;
-  //myPtr.meta.compTime.mutable: false;
-  //myPtr.meta.runtime.mutable: false;
+    allocatedOn: heap,           // ptr can be allocate on heap or stack 
+    allocator: ptrAllocator       // name of allocator
 
+    compTime.immutable: true,     // should be set by compiler and you can't change it -> otherwise compiler error!
+    compTime.initValue: nullptr,  // should be set by compiler and you can't change it -> otherwise compiler error!
+ 
+    runtime.immutable: true,      // should be set by compiler and you can't change it -> otherwise compiler error!
+                                  // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
+    runtime.initValue: nullptr   // should be set by compiler and you can't change it -> otherwise compiler error!
+  }
+  data myPtrOnHeap;
 
-  myPtr: allocate(10);
+  // from this point, on runtime, you have a memory of size 32*4 allocated on heap and a pointer points to the beginning of this memory.
+  print(myPtrOnHeap.memorySize); // 32*4
+
+  // note that you can't change the metadata after this point. this one for example cause a compile time error!
+  myPtrOnHeap.type = i32;
 
   // compiler error! only one variable can point to a heap location.
-  heap ptr anotherPtr: myPtr; 
+  data anotherPtr: myPtr; 
 
   // compiler error! you can't transfer ptr to another ptr. just to another function.
-  heap ptr transferedPointer: transfer anotherPtr; 
+  data transferedPointer: transfer anotherPtr; 
 
-  stack bool statusPrintIntegers: printIntegers();
+  .metadata { 
+    type: bool,                    // if you forget to set -> compiler error!
+    memorySize: sizeof(bool),      // should be set by compiler and you can't change it -> otherwise compiler error!
+    allocatedOn: stack,
+
+    compTime.immutable: false,
+    compTime.initValue: false,
+    runtime.immutable: true,
+    runtime.initValue: printIntegers()
+  }
+  data statusPrintIntegers;
+
   if (statusPrintIntegers = true) {
-    status: true;
-    outputArray : { 0, 1, 2 };
+    result: true;
   }
   else {
     status: false;
-    outputArray: { -1, -2, -3 };
   }
-
-  // this optional part calls when function finished and wants to return back to the caller.
-  defer {};
 }
 
-pub fn functionWithoutInputArg()->(stack bool status)
+.metadata { 
+  inputArgs: [stack bool status, heap mut array<i32> outputArray],
+  outputArgs: [stack i32 result],
+  public: true
+}
+function functionWithoutInputArg
 {
-  stack array<i8> a: {1, 2};
+  .metadata { 
+    type: array<i32>,           // if you forget to set -> compiler error!
+    memorySize: ,               // this should be calcluate by compiler and you can't change it -> otherwise compiler error!
+    allocatedOn: stack,
+
+    compTime.immutable: true,
+    compTime.initValue: {1, 2}
+    runtime.immutable: true,
+    runtime.initValue: 
+  }
+  data myArray;
 
   // compiler error! can't transfer variables on stack!
-  myFunc(transfer mut a); 
+  myFunc(transfer myArray); 
 
-  heap array<i32> b: {1, 2};
+  .metadata { 
+    type: array<i32>,           // if you forget to set -> compiler error!
+    memorySize: ,               // this should be calcluate by compiler and you can't change it -> otherwise compiler error!
+    allocatedOn: heap,
+
+    compTime.immutable: false,  // since it's on heap, this filed should be set to false by compiler and you can't change it -> otherwise compiler error!
+    compTime.initValue: {},     // since it's on heap, this filed should be set to false by compiler and you can't change it -> otherwise compiler error!
+    runtime.immutable: true,
+    runtime.initValue: {-1, 0, 23}
+  }
+  data arrayB;
 
   // OK -> pass as mut refrence without transfering ownership.
-  myFunc(mut b);
+  myFunc(mut arrayB);
 
   // OK -> b still accessible in this function.
-  print(b[0]); 
+  print(arrayB[0]); 
 
   // OK -> pass as mut refrence by transfering ownership.
-  myFunc(transfer mut b); 
+  myFunc(transfer mut arrayB); 
 
   // compiler error! b is transfered!
-  print(b[0]); 
+  print(arrayB[0]); 
 
-  stack i32 myInt: 1;
+  .metadata { 
+    type: i32,                    // if you forget to set -> compiler error!
+    memorySize: 4,                // 4Byte. this should be calcluate by compiler and you can't change it -> otherwise compiler error!
+    allocatedOn: stack,
 
-  // OK -> pass as stack const refrence
+    compTime.immutable: true,  
+    compTime.initValue: 1,
+    runtime.immutable: true,
+    runtime.initValue: 1 // since compTime.initValue already set, compiler will infer runtime.initValue automatically :)
+  }
+  data myInt;
+
+  // OK -> passing as stack compTime immutable data. (it will copy data to callee function)
   myFunc(myInt); 
+
+  .metadata { 
+    type: ptr,                    // if you forget to set -> compiler error!
+    pointTo: myInt                // or it can be a stack variable.
+    pointerSize: 4                // should be set by compiler -> compiler error! (every pointer is an i32 = 4Byte)
+    memorySize: sizeof(myInt)     // should be set by compiler and you can't change it -> otherwise compiler error!
+
+    allocatedOn: heap,            // ptr can be allocate on heap or stack 
+    allocator: ptrAllocator       // name of allocator. should be set by compiler but you CAN change it.
+
+    compTime.immutable: false,     // should be set by compiler and you can't change it -> otherwise compiler error!
+    compTime.initValue: nullptr,   // should be set by compiler and you can't change it -> otherwise compiler error!
+ 
+    runtime.immutable: true,      // should be set by compiler and you can't change it -> otherwise compiler error!
+                                  // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
+  }
+  data myIntPtr;
+
+  // OK -> passing as heap immutable ptr data. (callee access the origianl data)
+  myFunc(myIntPtr); 
+ 
+  //outputArray : { 0, 1, 2 };
+  //outputArray: { -1, -2, -3 };
 
   status: true;
 }
