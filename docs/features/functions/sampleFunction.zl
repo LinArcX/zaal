@@ -15,7 +15,11 @@
 /// it's output arg is special, since it returns to os, it should be i32.
 function main.metadata { 
   public: true,                                   // should be set by compiler by default and can't be override -> otherwise compiler error
-  inputArgs: [stack i32 argc, stack string argv], // should be set by compiler by default and can't be override -> otherwise compiler error
+  inputArgs: [
+    {
+      stack i32 argc, stack string argv
+    }
+  ], // should be set by compiler by default and can't be override -> otherwise compiler error
   outputArgs: [stack i32 result],                 // should be set by compiler by default and can't be override -> otherwise compiler error
 
   // optional things happening before entering to the first line of the funtion.
@@ -149,17 +153,21 @@ function withoutInputArg.metadata {
     }
   ]
 }.body {
-  .metadata { 
-    type: array<i32>,           // if you forget to set -> compiler error!
-    memorySize: ,               // this should be calcluate by compiler and you can't change it -> otherwise compiler error!
+  data myArray.metadata { 
+    // mandatory -> otherwise compiler error!
+    type: array,                // if you forget to set -> compiler error!
+    subType: i32,
     allocatedOn: stack,
+
+    // done by compiler. you can't change them -> otherwise compiler error!
+    memorySize: ,               // this should be calcluate by compiler and you can't change it -> otherwise compiler error!
+ 
 
     compTime.immutable: true,
     compTime.initValue: {1, 2}
     runtime.immutable: true,
     runtime.initValue: 
   }
-  data myArray;
 
   // compiler error! can't transfer variables on stack!
   myFunc(transfer myArray); 
@@ -265,21 +273,35 @@ function parent.metadata {
 }
 // ---------------------------------------------------------------//
 
+function transferOwnershipToParent.metadata { 
+  public: true,
+  outputArgs: [ 
+    // this is mandatroy -> otherwise compiler error!
+    {
+      name: status,
+      type: bool,
+      allocatedOn: stack, // since it created on stack, a copy from the it will create and will pass parent function.
+      immutable: false
+    },
+    {
+      name: numbers,
+      type: array,
+      subType: i32,
+      allocatedOn: heap,
 
-
-// note that inside the function, you should define:
-//  - a stack allocated Result called result --> otherwise, compiler error.
-//    - a copy from the it will create and pass as result to the parent function.
-//  - a heap allocaetd array<i32> called numbers --> otherwise, compiler error.
-//    - it will pass as const refrence and ownwershipt will transfer automatically to parent function.
-fn transferOwnershipToParent()->(stack Result result, heap array<i32> numbers)
-{
+      // done by compiler. you can't change them -> otherwise compiler error!
+      immutable: false
+    }
+  ]
+}.body {
   // it will automatically transfer the ownership to output arg 'numbers'
-  numbers : {1, 2}; 
-
-  result.status: OK;
-  result.message: "success";
+  numbers: [1, 2]; 
+  status: true;
 }
+// ---------------------------------------------------------------//
+
+
+
 
 fn transferOwnershipToChild()->(stack |bool status, string msg|)
 {
