@@ -10,27 +10,20 @@
 //      - if it's a stack data: a copy from the variables inside the function will pass to parent function.
 //      - first output argument: `stack bool status` is mandatory (if you don't set the value to it -> compiler error)
 //      - other output arguments are optional.
-
-
+// ---------------------------------------------------------------//
 /// main function is the entery point of any zaal program.
 /// it's output arg is special, since it returns to os, it should be i32.
-.metadata { 
-  inputArgs: [stack i32 argc, stack string argv], // should be inject by compiler by default and can't be override -> otherwise compiler error
-  outputArgs: [stack i32 result],                 // should be inject by compiler by default and can't be override -> otherwise compiler error
-  public: true,                                   // private functions are not visible outside a moudle.
+function main.metadata { 
+  public: true,                                   // should be set by compiler by default and can't be override -> otherwise compiler error
+  inputArgs: [stack i32 argc, stack string argv], // should be set by compiler by default and can't be override -> otherwise compiler error
+  outputArgs: [stack i32 result],                 // should be set by compiler by default and can't be override -> otherwise compiler error
 
   // optional things happening before entering to the first line of the funtion.
-  beforeInit: {
-
-  } 
+  beforeInit: {} 
 
   // optional things happening just before funtion ends. (it's like defer in other languages)
-  beforeEnd: {
-
-  }
-}
-function main
-{
+  beforeEnd: {}
+}.body {
   // allocate memory on the heap (on runtime for sure!)
   // note that metadata should be provided -> otherwise compiler error
   .metadata { 
@@ -85,13 +78,77 @@ function main
   }
 }
 
-.metadata { 
-  inputArgs: [stack bool status, heap mut array<i32> outputArray],
-  outputArgs: [stack i32 result],
-  public: true
+// ---------------------------------------------------------------//
+function oneInputArg.metadata {
+  public: true,
+  inputArgs: [ 
+    {
+      name: value,
+      type: i16,
+      allocatedOn: stack,
+      immutable: false
+    }
+  ],
+  outputArgs: [ 
+    {
+      name: status,
+      type: bool,
+      allocatedOn: stack,
+      immutable: false
+    },
+    {
+      name: message,
+      type: string,
+      allocatedOn: stack,
+      immutable: false
+    }
+  ]
+}.body {
+  data myInteger.metadata {
+    type: i8,                      // if you forget to set -> compiler error!
+    memorySize: sizeof(i8),      // should be set by compiler and you can't change it -> otherwise compiler error!
+    allocationOn: stack,
+    compTime.immutable: true,
+    compTime.initValue: 12,
+    runtime.immutable: true,
+    runtime.initValue:           // no need to set it, compiler will set it since it's a compTime.immutable.
+  }
+  print("myInteger: {}\n", myInteger);
+
+  data myMutableInteger.metadata {
+    type: i32,                      // if you forget to set -> compiler error!
+    memorySize: sizeof(i32),      // should be set by compiler and you can't change it -> otherwise compiler error!
+    allocationOn: stack,
+    compTime.immutable: false,
+    compTime.initValue: 0,
+    runtime.immutable: false,
+    runtime.initValue: 989
+  }
+  println("myMutable Integer: {}, value: {}", myMutableInteger, value);
+
+  status: true;
+  message : "passed!";
 }
-function functionWithoutInputArg
-{
+// ---------------------------------------------------------------//
+
+function withoutInputArg.metadata { 
+  public: true,
+  outputArgs: [ 
+    {
+      name: status,
+      type: bool,
+      allocatedOn: stack,
+      immutable: false
+    }, 
+    {
+      name: outputArray
+      type: array,
+      subType: i32,
+      allocatedOn: heap,
+      immutable: false,
+    }
+  ]
+}.body {
   .metadata { 
     type: array<i32>,           // if you forget to set -> compiler error!
     memorySize: ,               // this should be calcluate by compiler and you can't change it -> otherwise compiler error!
@@ -171,30 +228,44 @@ function functionWithoutInputArg
 
   status: true;
 }
+// ---------------------------------------------------------------//
 
-pub fn functionWithOneInputArg(mut i16 value)->(Result result)
-{
-  // this is a normal comment.
-  i8 myInteger : 12;
-  mut i32 myMutableInteger : 12;
+function parent.metadata { 
+  public: true,
+  outputArgs: [ 
+    {
+      name: status,
+      type: bool,
+      allocatedOn: stack,
+      immutable: false
+    }
+  ]
+}.body {
+  data numbersPtr.metadata {
+    // mandatory. if you forget to set -> compiler error!
+    type: ptr,
+    pointTo: transferOwnershipToPrant.metadata.outputArgs.numbers,
 
-  print("myInteger: {}\n", myInteger);
-  println("myMutable Integer: {}, value: {}", myMutableInteger, value);
+    // optional
+    allocator: ptrAllocator       // name of allocator
 
-  Result.status : SUCCESS;
-  Result.message : "test() failed!";
+    // set by compiler automatically. if you change them -> compiler error!
+    memorySize: ,                 // size of memory address this pointer points to it.
+    pointerSize: 4,               // every pointer is an i32.(4Byte)
+    compTime.immutable: true,
+    compTime.initValue: nullptr,
+    runtime.immutable: true,      // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
+    // allocatedOn: stack,        // ptr can be allocate on heap or stack. do we really need this?
+  }
+
+  print(numbersPtr[1]); // [] is the way to access individual elemetns a pointer points to.
+                        // in this case, it return the first element of the array which is 2.
+
+  status: true;
 }
+// ---------------------------------------------------------------//
 
-fn parent()->(stack Result result)
-{
-  stack Result res,
-  owned heap array<i32> numbers = transferOwnershipToParent();
 
-  print(numbers[1]); // 2
-
-  result.status: OK;
-  result.message: "success";
-}
 
 // note that inside the function, you should define:
 //  - a stack allocated Result called result --> otherwise, compiler error.
