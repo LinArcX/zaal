@@ -1,5 +1,5 @@
-#ifndef KAVEH_GENERATOR_H
-#define KAVEH_GENERATOR_H
+#ifndef ZAAL_GENERATOR_H
+#define ZAAL_GENERATOR_H
 
 #include "parser.h"
 

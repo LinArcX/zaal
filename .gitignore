@@ -2,6 +2,7 @@ tags
 out
 out.*
 build/*
+.cache/*
 gmon.out
 garbage/*
 massif.out.*

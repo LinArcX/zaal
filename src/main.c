@@ -1,40 +1,34 @@
 #include <errno.h>
 
 #include "scanner.h"
-#include "parser.h"
-#include "generator.h"
+//#include "parser.h"
+//#include "generator.h"
 
-FILE	*p_outFile;
+FILE	*pOutFile;
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-  if (2 != argc)
-  {
+  if (2 != argc) {
     fprintf(stderr, "Usage: %s <sourceFile>\n", argv[0]);
     return -1;
   }
 
-  p_sourceFile = fopen(argv[1], "r");
-  if (NULL == p_sourceFile)
-  {
+  pSourceFile = fopen(argv[1], "r");
+  if (NULL == pSourceFile) {
     fprintf(stderr, "Unable to open %s: %s\n", argv[1], strerror(errno));
     return -1;
   }
 
-
-  if(scan(&g_token))
-  {
-    p_outFile = fopen("out.s", "w");
-    if (NULL == p_outFile)
-    {
+  if(true == scan(&gToken)) {
+    pOutFile = fopen("out.s", "w");
+    if (NULL == pOutFile) {
       fprintf(stderr, "Unable to create out.s: %s\n", strerror(errno));
       return -1;
     }
-    genpreamble();                
-    statements();
-    genpostamble();               
-    fclose(p_outFile);              
+    //genpreamble();                
+    //statements();
+    //genpostamble();               
+    fclose(pOutFile);              
     return 0;
 
     //struct ASTnode *node = {0};
@@ -43,7 +37,7 @@ main(int argc, char *argv[])
     //{
     //  printf("%d\n", interpretAST(node));
     //  generateCode(node);
-    //  fclose(p_outFile);
+    //  fclose(pOutFile);
     //  return 0;
     //}
   }

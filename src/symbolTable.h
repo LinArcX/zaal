@@ -1,5 +1,5 @@
-#ifndef KAVEH_SYMBOL_TABLE_H
-#define KAVEH_SYMBOL_TABLE_H
+#ifndef ZAAL_SYMBOL_TABLE_H
+#define ZAAL_SYMBOL_TABLE_H
 
 #define NSYMBOLS        1024            // Number of symbol table entries
 static int Globs = 0;		// Position of next free global symbol slot

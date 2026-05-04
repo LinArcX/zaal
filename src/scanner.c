@@ -1,55 +1,62 @@
 #include "scanner.h"
-#include "kutil.h"
+#include "zutil.h"
 
-Token g_token;
+uint32_t line = 1;
+uint32_t lastChar = 0;
+Token gToken = {0};
+FILE* pSourceFile = NULL;
+char Text[TEXTLEN + 1] = {0};
 
-int   line = 1;
-int	  lastChar = 0;
-FILE  *p_sourceFile;
-char Text[TEXTLEN + 1];
-
-static int
-nextChar(void)
+static int getNextChar(void)
 {
-  int ch;
+  uint32_t ch = 0;
 
-  if (lastChar)
-  {
-    ch = lastChar;	// Use the character put back if there is one
+  if (0 != lastChar) {
+    // if we already put back a character, just return it.
+    ch = lastChar;	
     lastChar = 0;
-    return ch;
   }
-
-  ch = fgetc(p_sourceFile);
-  if ('\n' == ch)
-  {
-    line++;
+  else {
+    // read next char from pSourceFile stream
+    ch = fgetc(pSourceFile);
+    if ('\n' == ch) {
+      line++;
+    }
   }
   return ch;
 }
 
-static int
-charPositionInString(const char * str, int ch)
+static int skipWhiteSpaces(void)
 {
-  const char * position = strchr(str, ch);
-  if(position)
+  int ch = getNextChar();
+  // \f: form-feed character (ASCII 12, U+000C). It's a control character originally used to advance printers to the start of the next page. 
+  // \r: carriage return control character (ASCII 13, U+000D).
+  //    It moves the cursor to the start of the current line without advancing to the next line.
+  while (' ' == ch || '\t' == ch || '\n' == ch || '\r' == ch || '\f' == ch) {
+    ch = getNextChar();
+  }
+  return (ch);
+}
+
+static int charPositionInString(const char* str, int ch)
+{
+  const char* position = strchr(str, ch);
+  if(NULL != position)
   {
     return position - str;
   }
   return -1;
 }
 
-static int
-scanInteger(int ch)
+static int scanInteger(int ch)
 {
   int k;
   int val = 0;
 
   // Convert each character into an int value
-  while ((k = charPositionInString("0123456789", ch)) >= 0)
-  {
+  while ((k = charPositionInString("0123456789", ch)) >= 0) {
     val = val * 10 + k;
-    ch = nextChar();
+    ch = getNextChar();
   }
 
   // We hit a non-integer character, put it back.
@@ -57,24 +64,20 @@ scanInteger(int ch)
   return val;
 }
 
-static int
-scanIdentifier(int c, char *buf, int lim)
+static int scanIdentifier(int c, char *buf, int lim)
 {
   int i = 0;
 
-  while (isalpha(c) || isdigit(c) || '_' == c) 
-  {
+  while (isalpha(c) || isdigit(c) || '_' == c) {
     // Error if we hit the identifier length limit, else append to buf[] and get next character
-    if (lim - 1 == i) 
-    {
+    if (lim - 1 == i) {
       fprintf(stderr, "[%s, %s, %s(), %d] identifier too long on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, line);
       //return 0;
     } 
-    else if (i < lim - 1) 
-    {
+    else if (i < lim - 1) {
       buf[i++] = c;
     }
-    c = nextChar();
+    c = getNextChar();
   }
   // We hit a non-valid character, put it back. NUL-terminate the buf[] and return the length
   lastChar = c;
@@ -84,8 +87,7 @@ scanIdentifier(int c, char *buf, int lim)
 
 // Given a word from the input, return the matching keyword token number or 0 if it's not a keyword.
 // Switch on the first letter so that we don't have to waste time strcmp()ing against all the keywords.
-static int 
-keyword(char *s) 
+static int keyword(char *s) 
 {
   switch (*s) 
   {
@@ -105,109 +107,78 @@ keyword(char *s)
   return (0);
 }
 
-static int
-skipWhiteSpaces(void)
+int scan(Token* token)
 {
-  int ch = nextChar();
-  while (' ' == ch || '\t' == ch || '\n' == ch || '\r' == ch || '\f' == ch)
-  {
-    ch = nextChar();
+  bool result = false;
+  if (NULL == token) {
+    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__);
   }
-  return (ch);
-}
-
-int
-scan(Token * token)
-{
-  memset(token, 0, sizeof(Token));
-
-  if(NULL != token)
-  {
+  else {
+    memset(token, 0, sizeof(Token));
     int ch = skipWhiteSpaces();
 
-    if(EOF == ch)
-    {
+    if(EOF == ch) {
       token->type = TOKEN_EOF;
-      return 0;
+      return result;
     }
-    if('+' == ch)
-    {
+    else if('+' == ch) {
       token->type = TOKEN_PLUS;
-      if(!kmemcpy(token->literal.oprator, "+"))
-      {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_KAVEH), __FILE__, __func__, __LINE__);
-        return 0;
+      if(!zmemcpy(token->literal.oprator, "+")) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        return result;
       }
     }
-    else if('-' == ch)
-    {
+    else if('-' == ch) {
       token->type = TOKEN_MINUS;
-      if(!kmemcpy(token->literal.oprator, "-"))
-      {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_KAVEH), __FILE__, __func__, __LINE__);
-        return 0;
+      if(!zmemcpy(token->literal.oprator, "-")) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        return result;
       }
     }
-    else if('*' == ch)
-    {
+    else if('*' == ch) {
       token->type = TOKEN_STAR;
-      if(!kmemcpy(token->literal.oprator, "*"))
-      {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_KAVEH), __FILE__, __func__, __LINE__);
-        return 0;
+      if(!zmemcpy(token->literal.oprator, "*")) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        return result;
       } 
     }
-    else if('/' == ch)
-    {
+    else if('/' == ch) {
       token->type = TOKEN_SLASH;
-      if(!kmemcpy(token->literal.oprator, "/"))
-      {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_KAVEH), __FILE__, __func__, __LINE__);
-        return 0;
+      if(!zmemcpy(token->literal.oprator, "/")) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        return result;
       }
     }
-    else if(';' == ch)
-    {
+    else if(';' == ch) {
       token->type = TOKEN_SEMICOLON;
     }
-    else if('=' == ch)
-    {
+    else if('=' == ch) {
       token->type = TOKEN_EQUALS;
     }
-    else 
-    {
-      if (isdigit(ch))
-      {
+    else {
+      if (isdigit(ch)) {
         token->type = TOKEN_INTEGER;
         token->literal.integer = scanInteger(ch);
       }
-      else if (isalpha(ch) || '_' == ch) 
-      {
+      else if (isalpha(ch) || '_' == ch) {
         // Read in a keyword or identifier
         scanIdentifier(ch, Text, TEXTLEN);
 
         int tokenType = keyword(Text);
-        if (tokenType)
-        {
+        if (tokenType) {
           token->type = tokenType;
         }
-        else
-        {
+        else {
           token->type = TOKEN_IDENTIFIER;
         }
         //fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, Text, line);
         //exit(1);
       }
-      else
-      {
+      else {
         fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised character %c on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, ch, line);
       }
     }
-    return 1;
+    result = true;
   }
-  else
-  {
-    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__);
-    return 0;
-  }
+  return result;
 }

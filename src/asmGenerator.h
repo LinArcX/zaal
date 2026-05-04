@@ -1,5 +1,5 @@
-#ifndef KAVEH_ASM_GENERATOR_H
-#define KAVEH_ASM_GENERATOR_H
+#ifndef ZAAL_ASM_GENERATOR_H
+#define ZAAL_ASM_GENERATOR_H
 
 #include <stdio.h>
 

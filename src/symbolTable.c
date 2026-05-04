@@ -1,7 +1,7 @@
 #include "symbolTable.h"
+#include <string.h>
 
-int 
-findglob(char *s) 
+int findglob(char *s) 
 {
   int i;
 

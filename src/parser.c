@@ -75,10 +75,10 @@ static struct ASTnode*
 primary(void) 
 {
   // For an INTLIT token, make a leaf AST node for it and scan in the next token. Otherwise, a syntax error for any other token type.
-  if(TOKEN_INTEGER == g_token.type)
+  if(TOKEN_INTEGER == gToken.type)
   {
-    struct ASTnode * n = buildASTLeaf(A_INTLIT, g_token.literal.integer);
-    scan(&g_token);
+    struct ASTnode * n = buildASTLeaf(A_INTLIT, gToken.literal.integer);
+    scan(&gToken);
     return n;
   }
   else
@@ -103,9 +103,9 @@ operatorPrecedence(int tokenType)
 void 
 match(int t, char *what) 
 {
-  if (g_token.type == t)
+  if (gToken.type == t)
   {
-    scan(&g_token);
+    scan(&gToken);
   }
   else
   {
@@ -198,25 +198,25 @@ statements(void)
 
   while (1) 
   {
-    if(TOKEN_PRINT == g_token.type)
+    if(TOKEN_PRINT == gToken.type)
     {
       print_statement();
     }
-    else if (TOKEN_INT == g_token.type)
+    else if (TOKEN_INT == gToken.type)
     {
       var_declaration();
     }
-    else if (TOKEN_IDENTIFIER == g_token.type)
+    else if (TOKEN_IDENTIFIER == gToken.type)
     {
       assignment_statement();
     }
-    else if (TOKEN_EOF == g_token.type)
+    else if (TOKEN_EOF == gToken.type)
     {
       return;
     }
     else
     {
-      fatald("Syntax error, token", g_token.type);
+      fatald("Syntax error, token", gToken.type);
     }
   }
 }
@@ -233,7 +233,7 @@ parseExpressions(int precedence)
   left = primary();
 
   // If no tokens left, return just the left node
-  tokenType = g_token.type;
+  tokenType = gToken.type;
   if (TOKEN_SEMICOLON == tokenType)
   {
     return left;
@@ -241,10 +241,10 @@ parseExpressions(int precedence)
 
   while(operatorPrecedence(tokenType) > precedence)
   {
-    scan(&g_token);
+    scan(&gToken);
     right = parseExpressions(g_operatorsPrecedence[tokenType]);
     left = buildASTNode(scannerTypeToParserType(tokenType), left, right, 0);
-    tokenType = g_token.type;
+    tokenType = gToken.type;
 
     if (TOKEN_SEMICOLON == tokenType)
     {

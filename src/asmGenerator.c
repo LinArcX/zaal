@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "kutil.h"
+#include "zutil.h"
 #include "asmGenerator.h"
 
 // List of available registers and their names
@@ -34,7 +34,7 @@ cgPreamble()
 	"main:\n"
 	"\tpushq\t%rbp\n"
 	"\tmovq	%rsp, %rbp\n",
-  p_outFile);
+  pOutFile);
 }
 
 void
@@ -44,7 +44,7 @@ cgPostamble()
 	"\tmovl	$0, %eax\n"
 	"\tpopq	%rbp\n"
 	"\tret\n",
-  p_outFile);
+  pOutFile);
 }
 
 // Load an integer literal value into a register. Return the number of the register
@@ -55,7 +55,7 @@ cgLoad(int value)
   int r= allocateRegister();
 
   // Print out the code to initialise it
-  fprintf(p_outFile, "\tmovq\t$%d, %s\n", value, reglist[r]);
+  fprintf(pOutFile, "\tmovq\t$%d, %s\n", value, reglist[r]);
   return(r);
 }
 
@@ -63,15 +63,15 @@ cgLoad(int value)
 void 
 cgPrintInt(int r) 
 {
-  fprintf(p_outFile, "\tmovq\t%s, %%rdi\n", reglist[r]);
-  fprintf(p_outFile, "\tcall\tprintint\n");
+  fprintf(pOutFile, "\tmovq\t%s, %%rdi\n", reglist[r]);
+  fprintf(pOutFile, "\tcall\tprintint\n");
   freeRegister(r);
 }
 
 int 
 cgAdd(int r1, int r2) 
 {
-  fprintf(p_outFile, "\taddq\t%s, %s\n", reglist[r1], reglist[r2]);
+  fprintf(pOutFile, "\taddq\t%s, %s\n", reglist[r1], reglist[r2]);
   freeRegister(r1);
   return(r2);
 }
@@ -79,7 +79,7 @@ cgAdd(int r1, int r2)
 int 
 cgSub(int r1, int r2) 
 {
-  fprintf(p_outFile, "\tsubq\t%s, %s\n", reglist[r2], reglist[r1]);
+  fprintf(pOutFile, "\tsubq\t%s, %s\n", reglist[r2], reglist[r1]);
   freeRegister(r2);
   return(r1);
 }
@@ -87,7 +87,7 @@ cgSub(int r1, int r2)
 int 
 cgMul(int r1, int r2) 
 {
-  fprintf(p_outFile, "\timulq\t%s, %s\n", reglist[r1], reglist[r2]);
+  fprintf(pOutFile, "\timulq\t%s, %s\n", reglist[r1], reglist[r2]);
   freeRegister(r1);
   return(r2);
 }
@@ -96,10 +96,10 @@ cgMul(int r1, int r2)
 int 
 cgDiv(int r1, int r2) 
 {
-  fprintf(p_outFile, "\tmovq\t%s,%%rax\n", reglist[r1]);
-  fprintf(p_outFile, "\tcqo\n");
-  fprintf(p_outFile, "\tidivq\t%s\n", reglist[r2]);
-  fprintf(p_outFile, "\tmovq\t%%rax,%s\n", reglist[r1]);
+  fprintf(pOutFile, "\tmovq\t%s,%%rax\n", reglist[r1]);
+  fprintf(pOutFile, "\tcqo\n");
+  fprintf(pOutFile, "\tidivq\t%s\n", reglist[r2]);
+  fprintf(pOutFile, "\tmovq\t%%rax,%s\n", reglist[r1]);
   freeRegister(r2);
   return(r1);
 }

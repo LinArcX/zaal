@@ -88,7 +88,6 @@ menu () {
   
   case $selected in
     "build(debug)")
-      clear
       echo ">>> creating build/debug directory"
       mkdir -p build/debug
  
@@ -96,7 +95,7 @@ menu () {
       bear -- cc -g -pg -O0 -DDEBUG \
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes\
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op\
-        -std=c11 --coverage -lmagic -o ./build/debug/zaal ./src/*.c
+        -std=c11 --coverage -lmagic -o ./build/debug/zaal ./src/main.c ./src/scanner.c ./src/zutil.c
       ;;
     "run(debug)")
       cd build/debug
