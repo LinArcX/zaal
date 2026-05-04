@@ -10,17 +10,61 @@
 //      - if it's a stack data: a copy from the variables inside the function will pass to parent function.
 //      - first output argument: `stack bool status` is mandatory (if you don't set the value to it -> compiler error)
 //      - other output arguments are optional.
+
 // ---------------------------------------------------------------//
 /// main function is the entery point of any zaal program.
 /// it's output arg is special, since it returns to os, it should be i32.
+/// it should be call only by zaal runtime, not your application -> otherwise, compiler error.
 function main.metadata { 
-  public: true,                                   // should be set by compiler by default and can't be override -> otherwise compiler error
+  // should be set by compiler and you can't change it -> otherwise compiler error!
+  public: false,
   inputArgs: [
     {
-      stack i32 argc, stack string argv
+      // mandatory set by developer -> otherwise, compiler error!
+      name: argc,
+      type: i32,
+
+      // should be set by compiler and you can't change it -> otherwise compiler error!
+      memorySize: sizeof(i32),      
+      allocatedOn: stack,
+
+      compTime.immutable: false,
+      compTime.initValue: 0,         // runtime.initValue is the same as compTime.initValue
+      runtime.immutable: false,
+      runtime.immutableAfter: 2      // argc will be immutable after 2 times it's value changed. 1: compile time, 2: the first value in runtime.
+      // runtime.mutableAfter: 0     // you could set this, if runtime.immutable was true.
+    },
+    {
+      // mandatory set by developer -> otherwise, compiler error!
+      name: argv,
+      type: string,
+
+      // should be set by compiler and you can't change it -> otherwise compiler error!
+      memorySize: sizeof(string),
+      allocatedOn: stack,
+
+      compTime.immutable: false,
+      compTime.initValue: 0,
+      runtime.immutable: false,
+      runtime.immutableAfter: 2
     }
-  ], // should be set by compiler by default and can't be override -> otherwise compiler error
-  outputArgs: [stack i32 result],                 // should be set by compiler by default and can't be override -> otherwise compiler error
+  ],
+  outputArgs: [
+    {
+      // mandatory set by developer -> otherwise, compiler error!
+      name: result,
+      type: i32,
+
+      // should be set by compiler and you can't change it -> otherwise compiler error!
+      memorySize: sizeof(i32),
+      allocatedOn: stack,
+
+      compTime.immutable: false,
+      compTime.initValue: 0,
+      runtime.immutable: false,
+      runtime.immutableAfter: 2
+    }
+  ],
 
   // optional things happening before entering to the first line of the funtion.
   beforeInit: {} 
@@ -29,31 +73,33 @@ function main.metadata {
   beforeEnd: {}
 }.body {
   // allocate memory on the heap (on runtime for sure!)
-  // note that metadata should be provided -> otherwise compiler error
-  .metadata { 
-    type: ptr,                    // if you forget to set -> compiler error!
-    pointTo: heap                 // or it can be a stack variable.
-    pointerSize: 4                // every pointer is an i32.(4Byte) should be set by compiler -> compiler error!
+  // defining data without metadata -> compiler error!
+  data myPtrOnHeap.metadata { 
+    // mandatory set by developer -> otherwise, compiler error!
+    type: ptr,                    
+    pointTo: heap                 // possible values: heap, stack
+    allocatePointerOn: heap,      // ptr itself can be allocate on heap or stack 
     memorySize: sizeof(i32) * 32, // 32*4 Byte. size of memory address this pointer points to it.
-                                  // if you forget to set -> compiler error!
-                                  // it the pointTo is a stack variable, memorySize should be set by compiler: sizeof(stackVar)
-
-    allocatedOn: heap,           // ptr can be allocate on heap or stack 
+                                  // if the pointTo is a stack variable, memorySize should be set by compiler: sizeof(stackVar)
+    // optional
     allocator: ptrAllocator       // name of allocator
 
-    compTime.immutable: true,     // should be set by compiler and you can't change it -> otherwise compiler error!
-    compTime.initValue: nullptr,  // should be set by compiler and you can't change it -> otherwise compiler error!
+    // should be set by compiler and you can't change it -> otherwise compiler error!
+    pointerSize: 4                // every pointer is an i32.(4Byte)
+    compTime.ptrImmutable: false,
+    compTime.ptrInitValue: 0,
+    runTime.ptrImmutable: false,
+    runTime.ptrImmutableAfter: 2, // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
  
-    runtime.immutable: true,      // should be set by compiler and you can't change it -> otherwise compiler error!
-                                  // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
-    runtime.initValue: nullptr   // should be set by compiler and you can't change it -> otherwise compiler error!
+    compTime.pointedMemoryImmutable: false,
+    runTime.pointedMemoryImmutable: false,
+    runTime.pointedMemoryImmutableAfter: 1,
   }
-  data myPtrOnHeap;
 
   // from this point, on runtime, you have a memory of size 32*4 allocated on heap and a pointer points to the beginning of this memory.
   print(myPtrOnHeap.memorySize); // 32*4
 
-  // note that you can't change the metadata after this point. this one for example cause a compile time error!
+  // note that you can't change the metadata after this point -> otherwise compiler error!
   myPtrOnHeap.type = i32;
 
   // compiler error! only one variable can point to a heap location.
@@ -62,17 +108,21 @@ function main.metadata {
   // compiler error! you can't transfer ptr to another ptr. just to another function.
   data transferedPointer: transfer anotherPtr; 
 
-  .metadata { 
-    type: bool,                    // if you forget to set -> compiler error!
-    memorySize: sizeof(bool),      // should be set by compiler and you can't change it -> otherwise compiler error!
+  metadata pMeta = call printIntegers;
+  data statusPrintIntegers.metadata { 
+    // mandatory set by developer -> otherwise, compiler error!
+    type: bool,
     allocatedOn: stack,
 
+    // should be set by compiler and you can't change it -> otherwise compiler error!
+    memorySize: sizeof(bool),
+
     compTime.immutable: false,
-    compTime.initValue: false,
-    runtime.immutable: true,
-    runtime.initValue: printIntegers()
+    compTime.value: false,
+    runtime.immutable: false,
+    runtime.value: pMeta.outputVariables,
+    runtime.immutableAfter: 2
   }
-  data statusPrintIntegers;
 
   if (statusPrintIntegers = true) {
     result: true;
@@ -249,10 +299,12 @@ function parent.metadata {
     }
   ]
 }.body {
+  metadata result = transferOwnershipToPrant;
+
   data numbersPtr.metadata {
     // mandatory. if you forget to set -> compiler error!
     type: ptr,
-    pointTo: transferOwnershipToPrant.metadata.outputArgs.numbers,
+    pointTo: result.outputArgs.numbers,
 
     // optional
     allocator: ptrAllocator       // name of allocator
@@ -265,6 +317,7 @@ function parent.metadata {
     runtime.immutable: true,      // ptrs tied to specific memory address. if you want to point to antoher address, you should create new ptr.
     // allocatedOn: stack,        // ptr can be allocate on heap or stack. do we really need this?
   }
+
 
   print(numbersPtr[1]); // [] is the way to access individual elemetns a pointer points to.
                         // in this case, it return the first element of the array which is 2.
