@@ -12,7 +12,7 @@
 
 extern uint32_t line;
 extern uint32_t lastChar;
-extern FILE* pSourceFile;
+//extern FILE* pSourceFile;
 
 // Last identifier scanned
 extern char Text[TEXTLEN + 1];         

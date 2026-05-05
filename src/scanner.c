@@ -4,10 +4,9 @@
 uint32_t line = 1;
 uint32_t lastChar = 0;
 Token gToken = {0};
-FILE* pSourceFile = NULL;
 char Text[TEXTLEN + 1] = {0};
 
-static int getNextChar(void)
+static uint32_t getNextChar(void)
 {
   uint32_t ch = 0;
 

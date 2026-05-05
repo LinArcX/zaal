@@ -1,5 +1,6 @@
-#include "scannerTests.h"
 #include <cmocka.h>
+#include "scannerTests.h"
+#include "../../src/scanner.c"
 
 /**
  * @brief Test that example_main() correctly processes a valid expression
@@ -10,6 +11,8 @@
  */
 static void scanner_test_spaces(void **state)
 {
+  getNextChar();
+
     const char *args[] = {
         "example",
         "1",

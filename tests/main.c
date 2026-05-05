@@ -1,14 +1,16 @@
-#include <stdint.h>
+#include <stdio.h>
 
 #include "scanner/scannerTests.h"
 #include "parser/parserTests.h"
 
 int main(void)
 {
-  uint32_t failedTests = 0;
+  int failedTests = 0U;
 
   failedTests += scannerRunner();
   failedTests += parserRunner();
+
+  printf("number of all failed TCs: %d\n", failedTests);
 
   return failedTests;
 }
