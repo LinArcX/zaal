@@ -1,6 +1,6 @@
+#include <unistd.h>
 #include <libgen.h>
 #include <cmocka.h>
-#include "scannerTests.h"
 #include "../../src/scanner.c"
 
 /**
@@ -10,20 +10,33 @@
  * This integration test verifies the complete application behavior including
  * output formatting.
  */
-static void scanner_test_spaces(void **state)
+static void testScannerGetNextChar(void **state)
 {
+  // no-op. tells the compiler state is intentionally unused. It suppresses "unused parameter" 
   (void)state;
 
   // open the file
-  char fileName[512];
-  strncpy(fileName, __FILE__, sizeof fileName);
+  char currentFile[512];
+  strncpy(currentFile, __FILE__, sizeof currentFile);
+  char *currentDir = dirname(currentFile);
 
-  char *srcDir = dirname(fileName);
+  char relativePath[512];
+  snprintf(relativePath, sizeof relativePath, "%s/%s", currentDir, "expressions/input00.txt");
 
-  char path[512];
-  snprintf(path, sizeof path, "%s/%s", srcDir, "data.txt");
+  char cwdArray[4096];
+  char* cwd = getcwd(cwdArray, sizeof cwdArray);
+  assert_non_null(cwd);
 
-  const FILE* pFile = fopen(path, "r");
+  //const char *rel = "relative/file.txt";
+  char abs[4096];
+  snprintf(abs, sizeof abs, "%s/%s", cwd, relativePath);
+  printf("Absolute (not resolved): %s\n", abs);
+
+  //char resolved[PATH_MAX];
+  //char* absolutPath = realpath(path, resolved);
+  //assert_non_null(absolutPath);
+
+  const FILE* pFile = fopen(abs, "r");
   assert_non_null(pFile);
 
   // tests
@@ -40,17 +53,10 @@ static void scanner_test_spaces(void **state)
   pFile = NULL;
 }
 
-static void scanner_test_null(void **state)
-{
-  // no-op. tells the compiler state is intentionally unused. It suppresses "unused parameter" 
-  (void) state; /* unused */
-}
-
 int scannerRunner(void)
 {
   const struct CMUnitTest tests[] = {
-      cmocka_unit_test(scanner_test_null),
-      cmocka_unit_test(scanner_test_spaces),
+      cmocka_unit_test(testScannerGetNextChar),
   };
 
   return cmocka_run_group_tests_name("Scanner", tests, NULL, NULL);
