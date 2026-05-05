@@ -1,69 +1,81 @@
+#include <stdbool.h>
+
 #include "scanner.h"
 #include "zutil.h"
 
-uint32_t line = 1;
-uint32_t lastChar = 0;
-Token gToken = {0};
-char Text[TEXTLEN + 1] = {0};
-
-static uint32_t getNextChar(void)
+static int getNextChar(const FILE* pFile,
+  uint32_t * const line,
+  uint32_t * const putBackChar)
 {
-  uint32_t ch = 0;
+  int ch = 0;
 
-  if (0 != lastChar) {
+  if (0 != *putBackChar) {
     // if we already put back a character, just return it.
-    ch = lastChar;	
-    lastChar = 0;
+    ch = *putBackChar;	
+    *putBackChar = 0;
   }
   else {
-    // read next char from pSourceFile stream
-    ch = fgetc(pSourceFile);
+    // read next char from pFile stream
+    ch = fgetc(pFile);
     if ('\n' == ch) {
-      line++;
+      *line += 1;
     }
   }
   return ch;
 }
 
-static int skipWhiteSpaces(void)
+static int skipWhiteSpaces(const FILE* pFile,
+  uint32_t * const line,
+  uint32_t * const putBackChar)
 {
-  int ch = getNextChar();
+  int ch = getNextChar(pFile, line, putBackChar);
   // \f: form-feed character (ASCII 12, U+000C). It's a control character originally used to advance printers to the start of the next page. 
   // \r: carriage return control character (ASCII 13, U+000D).
   //    It moves the cursor to the start of the current line without advancing to the next line.
   while (' ' == ch || '\t' == ch || '\n' == ch || '\r' == ch || '\f' == ch) {
-    ch = getNextChar();
+    ch = getNextChar(pFile, line, putBackChar);
   }
-  return (ch);
+  return ch;
 }
 
 static int charPositionInString(const char* str, int ch)
 {
+  int result = -1;
+
   const char* position = strchr(str, ch);
   if(NULL != position)
   {
-    return position - str;
+    result = position - str;
   }
-  return -1;
+  
+  return result;
 }
 
-static int scanInteger(int ch)
+static int scanInteger(const FILE* pFile,
+  int ch,
+  uint32_t * const line,
+  uint32_t * const putBackChar)
 {
-  int k;
-  int val = 0;
+  int position;
+  int intValue = 0;
 
   // Convert each character into an int value
-  while ((k = charPositionInString("0123456789", ch)) >= 0) {
-    val = val * 10 + k;
-    ch = getNextChar();
+  while ((position = charPositionInString("0123456789", ch)) >= 0) {
+    intValue = intValue * 10 + position;
+    ch = getNextChar(pFile, line, putBackChar);
   }
 
   // We hit a non-integer character, put it back.
-  lastChar = ch;
-  return val;
+  *putBackChar = ch;
+  return intValue;
 }
 
-static int scanIdentifier(int c, char *buf, int lim)
+static int scanIdentifier(const FILE* pFile,
+  int c,
+  char* buf,
+  int lim,
+  uint32_t * const line,
+  uint32_t * const putBackChar)
 {
   int i = 0;
 
@@ -76,10 +88,11 @@ static int scanIdentifier(int c, char *buf, int lim)
     else if (i < lim - 1) {
       buf[i++] = c;
     }
-    c = getNextChar();
+    c = getNextChar(pFile, line, putBackChar);
   }
+
   // We hit a non-valid character, put it back. NUL-terminate the buf[] and return the length
-  lastChar = c;
+  *putBackChar = c;
   buf[i] = '\0';
   return (i);
 }
@@ -106,7 +119,11 @@ static int keyword(char *s)
   return (0);
 }
 
-int scan(Token* token)
+int scan(const FILE* pFile,
+  Token    * const token,
+  uint32_t * const line,
+  uint32_t * const putBackChar,
+  char (*Text) [ETextLength])
 {
   bool result = false;
   if (NULL == token) {
@@ -114,7 +131,7 @@ int scan(Token* token)
   }
   else {
     memset(token, 0, sizeof(Token));
-    int ch = skipWhiteSpaces();
+    int ch = skipWhiteSpaces(pFile, line, putBackChar);
 
     if(EOF == ch) {
       token->type = TOKEN_EOF;
@@ -157,13 +174,13 @@ int scan(Token* token)
     else {
       if (isdigit(ch)) {
         token->type = TOKEN_INTEGER;
-        token->literal.integer = scanInteger(ch);
+        token->literal.integer = scanInteger(pFile, ch, line, putBackChar);
       }
       else if (isalpha(ch) || '_' == ch) {
         // Read in a keyword or identifier
-        scanIdentifier(ch, Text, TEXTLEN);
+        scanIdentifier(pFile, ch, *Text, ETextLength, line, putBackChar);
 
-        int tokenType = keyword(Text);
+        int tokenType = keyword(*Text);
         if (tokenType) {
           token->type = tokenType;
         }
@@ -174,7 +191,8 @@ int scan(Token* token)
         //exit(1);
       }
       else {
-        fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised character %c on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, ch, line);
+        fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised character %c on line %d\n",
+          errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, ch, line);
       }
     }
     result = true;

@@ -1,3 +1,4 @@
+#include <libgen.h>
 #include <cmocka.h>
 #include "scannerTests.h"
 #include "../../src/scanner.c"
@@ -11,24 +12,32 @@
  */
 static void scanner_test_spaces(void **state)
 {
-  getNextChar();
+  (void)state;
 
-    const char *args[] = {
-        "example",
-        "1",
-        "+",
-        "3",
-        "*",
-        "10",
-    };
+  // open the file
+  char fileName[512];
+  strncpy(fileName, __FILE__, sizeof fileName);
 
-    (void)state;
+  char *srcDir = dirname(fileName);
 
-    /* Verify expected output lines */
-    expect_string(example_test_printf, temporary_buffer, "1\n");
-    expect_string(example_test_printf, temporary_buffer, "  + 3 = 4\n");
-    expect_string(example_test_printf, temporary_buffer, "  * 10 = 40\n");
-    expect_string(example_test_printf, temporary_buffer, "= 40\n");
+  char path[512];
+  snprintf(path, sizeof path, "%s/%s", srcDir, "data.txt");
+
+  const FILE* pFile = fopen(path, "r");
+  assert_non_null(pFile);
+
+  // tests
+  uint32_t line = 0;
+  uint32_t putBackChar = 0;
+  int ch = getNextChar(pFile, &line, &putBackChar);
+  assert_int_equal(ch, 12);
+
+
+  // close the file
+  if (fclose(pFile) != 0) {
+    perror("ERROR! fclose: pSourceFile");
+  }
+  pFile = NULL;
 }
 
 static void scanner_test_null(void **state)

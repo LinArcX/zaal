@@ -1,24 +1,16 @@
-#ifndef KAVEH_SCANNER_H
-#define KAVEH_SCANNER_H
+#ifndef ZAAL_SCANNER_H
+#define ZAAL_SCANNER_H
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
 
-// Length of symbols in input
-#define TEXTLEN     512             
+enum compTimeConst {
+  ETextLength = 513
+};
 
-extern uint32_t line;
-extern uint32_t lastChar;
-//extern FILE* pSourceFile;
-
-// Last identifier scanned
-extern char Text[TEXTLEN + 1];         
-
-typedef enum
-{
+typedef enum {
   TOKEN_EOF = 0,
   TOKEN_PLUS,       // +
   TOKEN_MINUS,      // -
@@ -30,24 +22,27 @@ typedef enum
   TOKEN_INTEGER,
   TOKEN_FLOAT,
   TOKEN_IDENTIFIER,
+
   // temp
   TOKEN_INT,
   TOKEN_PRINT
 } TokenTypes;
 
-typedef struct
-{
+typedef struct {
   char oprator[2]; // 2 because one for operator and another for \0
   int integer;
 } TokenLiteral;
 
-typedef struct
-{
+typedef struct {
   TokenTypes type;
   TokenLiteral literal;
 } Token;
 extern Token gToken;
 
-int scan(Token* token);
+int scan(const FILE* pFile,
+  Token    * const token,
+  uint32_t * const line,
+  uint32_t * const putBackChar,
+  char (*Text) [ETextLength]);
 
-#endif
+#endif // ZAAL_SCANNER_H
