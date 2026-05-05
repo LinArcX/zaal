@@ -11,3 +11,4 @@ callgrind.out.*
 breakpoints.json
 uftrace.data.old/*
 compile_commands.json
+libs/cmocka/cmocka-2.0.2/*
