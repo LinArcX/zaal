@@ -135,11 +135,12 @@ menu () {
       echo ">>> creating build/tests directory"
       mkdir -p build/tests
  
+      # cmock library is here: /usr/local/lib64/
       echo ">>> compiling (tests)"
       cc -g -pg -O0 -DDEBUG \
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes\
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op\
-        -std=c11 --coverage -lcmocka -o ./build/tests/zaalTests ./tests/*.c
+        -std=c11 --coverage -lcmocka -o ./build/tests/zaalTests ./tests/main.c ./tests/scanner/*.c ./tests/parser/*.c
       ;;
     "run(tests)")
       cd build/tests
