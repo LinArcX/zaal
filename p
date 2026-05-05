@@ -30,6 +30,9 @@ menu () {
 
     # release
     "build(release)" "run(release)" "clean(release)"
+
+    # tests
+    "build(tests)" "run(tests)" "gdb(tests)" "clean(tests)"
   
     # documentation
     "doxygen(generate)" 
@@ -127,6 +130,30 @@ menu () {
     "clean(release)")
       echo ">>> cleaning build/release directory"
       rm -r build/release/*
+      ;;
+    "build(tests)")
+      echo ">>> creating build/tests directory"
+      mkdir -p build/tests
+ 
+      echo ">>> compiling (tests)"
+      cc -g -pg -O0 -DDEBUG \
+        -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes\
+        -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op\
+        -std=c11 --coverage -lcmocka -o ./build/tests/zaalTests ./tests/*.c
+      ;;
+    "run(tests)")
+      cd build/tests
+      ./zaalTests
+      cd ../..
+      ;;
+    "gdb(tests)")
+      cd build/tests
+      gdb --tui zaalTests
+      cd ../..
+      ;;
+    "clean(tests)")
+      echo ">>> cleaning build/tests directory"
+      rm -r build/tests/*
       ;;
     "doxygen(generate)")
       doxygen
