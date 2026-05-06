@@ -7,8 +7,6 @@
 bool removeSubDirectoryFromPath(char * path,
     uint32_t numbersOfSubDirsToRemove);
 
-const char * const getProjectRootPath();
-
 #endif // ZAAL_ASM_GENERATOR_H
 
 
