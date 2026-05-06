@@ -4,11 +4,10 @@
 #include <stdio.h>
 
 enum Z_ERROR {
-  ERROR_PARSER,
-  ERROR_SCANNER,
-  ERROR_GENERATOR,
-  ERROR_ZAAL,
-  WARNING
+  INFO,
+  WARNING,
+  ERROR,
+  FATAL
 };
 
 extern FILE	*pOutFile;

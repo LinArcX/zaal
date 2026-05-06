@@ -82,7 +82,7 @@ static int scanIdentifier(const FILE* pFile,
   while (isalpha(c) || isdigit(c) || '_' == c) {
     // Error if we hit the identifier length limit, else append to buf[] and get next character
     if (lim - 1 == i) {
-      fprintf(stderr, "[%s, %s, %s(), %d] identifier too long on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, line);
+      fprintf(stderr, "[%s, %s, %s(), %d] identifier too long on line %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, line);
       //return 0;
     } 
     else if (i < lim - 1) {
@@ -127,7 +127,7 @@ int scan(const FILE* pFile,
 {
   bool result = false;
   if (NULL == token) {
-    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__);
+    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", errorType(ERROR), __FILE__, __func__, __LINE__);
   }
   else {
     memset(token, 0, sizeof(Token));
@@ -140,28 +140,28 @@ int scan(const FILE* pFile,
     else if('+' == ch) {
       token->type = TOKEN_PLUS;
       if(!zmemcpy(token->literal.oprator, "+")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
     else if('-' == ch) {
       token->type = TOKEN_MINUS;
       if(!zmemcpy(token->literal.oprator, "-")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
     else if('*' == ch) {
       token->type = TOKEN_STAR;
       if(!zmemcpy(token->literal.oprator, "*")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
         return result;
       } 
     }
     else if('/' == ch) {
       token->type = TOKEN_SLASH;
       if(!zmemcpy(token->literal.oprator, "/")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
@@ -187,12 +187,12 @@ int scan(const FILE* pFile,
         else {
           token->type = TOKEN_IDENTIFIER;
         }
-        //fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, Text, line);
+        //fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, Text, line);
         //exit(1);
       }
       else {
         fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised character %c on line %d\n",
-          errorType(ERROR_SCANNER), __FILE__, __func__, __LINE__, ch, line);
+          errorType(ERROR), __FILE__, __func__, __LINE__, ch, line);
       }
     }
     result = true;

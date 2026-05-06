@@ -9,7 +9,7 @@ int zmemcpy(void* dest, const void* src)
   size_t destSize = sizeof(dest);
 
   if(destSize < srcSize) {
-    fprintf(stderr, "[%s, %s, %s, %d] *dest > *src\n", errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+    fprintf(stderr, "[%s, %s, %s, %d] *dest > *src\n", errorType(ERROR), __FILE__, __func__, __LINE__);
     return 0;
   }
   else {
@@ -28,16 +28,19 @@ int zmemcpy(void* dest, const void* src)
 
 char* errorType(int error_type)
 {
-  if(ERROR_SCANNER == error_type) {
-    return (char*)"Scanner Error";
+  if(INFO == error_type) {
+    return (char*)"INFO";
   }
-  else if(ERROR_PARSER == error_type) {
-    return (char*)"Parser Error";
+  else if(WARNING == error_type) {
+    return (char*)"WARNING";
   }
-  else if(ERROR_ZAAL == error_type) {
-    return (char*)"Zaal Error";
+  else if(ERROR == error_type) {
+    return (char*)"ERROR";
+  }
+  else if(FATAL == error_type) {
+    return (char*)"FATAL";
   }
   else {
-    return (char*)"Uknown Error";
+    return (char*)"UKNOWN";
   }
 }

@@ -17,7 +17,7 @@ buildASTNode(int op, struct ASTnode *left, struct ASTnode *right, int intvalue)
   n = (struct ASTnode *) malloc(sizeof(struct ASTnode));
   if (NULL == n) 
   {
-    fprintf(stderr, "[%s, %s, %s(), %d] Unable to malloc ASTNode!\n", errorType(ERROR_PARSER), __FILE__, __func__, __LINE__);
+    fprintf(stderr, "[%s, %s, %s(), %d] Unable to malloc ASTNode!\n", errorType(ERROR), __FILE__, __func__, __LINE__);
     return NULL;
   }
 
@@ -65,7 +65,7 @@ scannerTypeToParserType(int token)
   }
   else
   {
-    fprintf(stderr, "[%s, %s, %s(), %d] Unknown token: %d on line %d\n", errorType(ERROR_PARSER), __FILE__, __func__, __LINE__, token, line);
+    fprintf(stderr, "[%s, %s, %s(), %d] Unknown token: %d on line %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, token, line);
     return -2;
   }
 }
@@ -83,7 +83,7 @@ primary(void)
   }
   else
   {
-    fprintf(stderr, "[%s, %s, %s(), %d] Syntax Error on line: %d\n", errorType(ERROR_PARSER), __FILE__, __func__, __LINE__, line);
+    fprintf(stderr, "[%s, %s, %s(), %d] Syntax Error on line: %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, line);
   }
   return NULL;
 }
@@ -94,7 +94,7 @@ operatorPrecedence(int tokenType)
   int prec = g_operatorsPrecedence[tokenType];
   if (prec == 0) 
   {
-    fprintf(stderr, "[%s, %s, %s(), %d] Syntax Error on line: %d, token: %d\n", errorType(ERROR_PARSER), __FILE__, __func__, __LINE__, line, tokenType);
+    fprintf(stderr, "[%s, %s, %s(), %d] Syntax Error on line: %d, token: %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, line, tokenType);
   }
   return prec;
 }

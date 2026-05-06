@@ -19,46 +19,53 @@ bool removeSubDirectoryFromPath(char * path,
     uint32_t subDirsToBeRemove)
 {
   bool result = false;
-  if(NULL != path) {
-    uint32_t length = strlen(path);
-    if(length > 0) {
-      // skip '\0'
-      ssize_t i = (ssize_t)length - 1;
+  if(subDirsToBeRemove > 0) {
+    if(NULL != path) {
+      uint32_t length = strlen(path);
+      if(length > 0) {
+        // skip '\0'
+        ssize_t i = (ssize_t)length - 1;
 
-      // skip trailing slashes
-      while (i >= 0 && path[i] == '/') --i;
+        // skip trailing slashes
+        while (i >= 0 && path[i] == '/') --i;
 
-      uint32_t removedSubDirs = 0;
-      while (i >= 0) {
-        if(isalnum(path[i])) {
-          // shrink the string by putting string NUL terminator at path[i]
-          path[i] = '\0';
-          --i;
-        }
-        else if (path[i] == '/') {
-          path[i] = '\0';
-          --i;
-          removedSubDirs++;
-          if (removedSubDirs == subDirsToBeRemove) {
-            result = true;
-            break;
+        uint32_t removedSubDirs = 0;
+        while (i >= 0) {
+          if (path[i] == '/') {
+            path[i] = '\0';
+            --i;
+            removedSubDirs++;
+            if (removedSubDirs == subDirsToBeRemove) {
+              result = true;
+              break;
+            }
+          }
+          else {
+            // shrink the string by putting string NUL terminator at path[i]
+            path[i] = '\0';
+            --i;
           }
         }
-        else {
-          fprintf(stderr, "ERROR --> [%s, %s, %s(), %d], unknown cahr\n",
-            errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
-        }
+      }
+      else if (0 == length) {
+        fprintf(stderr, "[%s: <%s> | %s() | %d] -> path is empty\n",
+          errorType(INFO), __FILE__, __func__, __LINE__);
+ 
+      }
+      else {
+        fprintf(stderr, "[%s: <%s> | %s() | %d] -> length < 0\n",
+          errorType(INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
-      fprintf(stderr, "ERROR --> [%s, %s, %s(), %d], length < 0\n",
-        errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+      fprintf(stderr, "[%s: <%s> | %s() | %d] -> path is NULL\n",
+        errorType(INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
-    fprintf(stderr, "ERROR --> [%s, %s, %s(), %d], path is NULL\n",
-      errorType(ERROR_ZAAL), __FILE__, __func__, __LINE__);
+    result = true;
   }
+  
   return result;
 }
 
