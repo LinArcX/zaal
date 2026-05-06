@@ -3,6 +3,9 @@
 # to run this file: ./p
 #
 # nvim tips:
+#   file manager: ":Neotree" or ", b f"
+#     to get help on Neotree, just press ?
+#     toggle between Neotree: Shift-f
 #   switch between source/header: F2
 #   search files: ctrl-f, alt-f
 #   search strings: ctrl-g, alt-g, /
@@ -96,9 +99,10 @@ menu () {
  
       echo ">>> compiling (debug mode)"
       bear -- cc -g -pg -O0 -DDEBUG \
-        -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes\
-        -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op\
-        -std=c11 --coverage -lmagic -o ./build/debug/zaal ./src/main.c ./src/scanner.c ./src/zutil.c
+        -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
+        -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
+        -std=c11 --coverage -lmagic -o ./build/debug/zaal \
+        ./src/main.c ./src/util/fileUtil.c ./src/scanner.c ./src/zutil.c
       ;;
     "run(debug)")
       cd build/debug
@@ -140,7 +144,8 @@ menu () {
       cc -g -pg -O0 -DDEBUG -std=c11 --coverage \
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
-        -lcmocka -o ./build/tests/zaalTests ./tests/main.c ./tests/scanner/*.c ./tests/parser/*.c ./src/zutil*
+        -lcmocka -o ./build/tests/zaalTests \
+        ./tests/main.c ./tests/util/*.c ./tests/scanner/*.c ./tests/parser/*.c ./src/zutil* ./src/util/fileUtil.c 
       ;;
     "run(tests)")
       cd build/tests
