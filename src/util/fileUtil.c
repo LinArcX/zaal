@@ -47,16 +47,16 @@ bool removeSubDirectoryFromPath(char * path,
         }
       }
       else if (0 == length) {
-        fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n\n",
+        fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n",
           errorType(INFO), __FILE__, __func__, __LINE__);
       }
       else {
-        fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n\n",
+        fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n",
           errorType(INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
-      fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is NULL\n\n",
+      fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is NULL\n",
         errorType(INFO), __FILE__, __func__, __LINE__);
     }
   }
