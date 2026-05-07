@@ -220,7 +220,6 @@ static void getNextChar_allChars(void **state)
  */
 static void getNextChar_putBackChar(void **state)
 {
-  // no-op. tells the compiler state is intentionally unused. It suppresses "unused parameter" 
   (void)state;
   FILE* pFile = NULL;
   uint32_t line = 0;
@@ -245,6 +244,48 @@ static void getNextChar_putBackChar(void **state)
 }
 
 /**
+ * @brief testing skipWihteSpaces
+ *
+ * @param state 
+ */
+static void skipWhiteSpacesTest(void **state)
+{
+  (void)state;
+  FILE* pFile = NULL;
+  uint32_t line = 0;
+  uint32_t putBackChar = 0;
+
+  setup(&pFile, "tests/scanner/assets/whiteSpaces.txt");
+
+  assert_int_equal(116, skipWhiteSpaces(pFile, &line, &putBackChar)); // 116 = t
+  assert_int_equal(97, skipWhiteSpaces(pFile, &line, &putBackChar)); // 97 = a
+  assert_int_equal(59, skipWhiteSpaces(pFile, &line, &putBackChar)); // 59 = ;
+  assert_int_equal(0, line);
+  assert_int_equal(0, putBackChar);
+                                                                     
+  // passing a random putBackChar to see if skipWhiteSpaces() can fetch it or no
+  putBackChar = '(';
+  assert_int_equal(40, skipWhiteSpaces(pFile, &line, &putBackChar)); // 40 = (
+  assert_int_equal(0, putBackChar);
+
+  assert_int_equal(38, skipWhiteSpaces(pFile, &line, &putBackChar)); // 38 = &
+  assert_int_equal(1, line);
+  assert_int_equal(0, putBackChar);
+                                                                 
+  assert_int_equal(48, skipWhiteSpaces(pFile, &line, &putBackChar)); // 48 = 0
+  assert_int_equal(5, line);
+  assert_int_equal(0, putBackChar);
+                                                                 
+  assert_int_equal(56, skipWhiteSpaces(pFile, &line, &putBackChar)); // 56 = 8
+  assert_int_equal(7, line);
+  assert_int_equal(0, putBackChar);
+                                                                 
+  assert_int_equal(-1, skipWhiteSpaces(pFile, &line, &putBackChar)); // -1 = EOF
+                                                                 
+  tearDown(pFile);
+}
+
+/**
  * @brief entry point to register and run scanner TCs
  *
  * @return number of failed TCs
@@ -254,6 +295,7 @@ int scannerRunner(void)
   const struct CMUnitTest tests[] = {
       cmocka_unit_test(getNextChar_allChars),
       cmocka_unit_test(getNextChar_putBackChar),
+      cmocka_unit_test(skipWhiteSpacesTest),
   };
 
   return cmocka_run_group_tests_name("Scanner", tests, NULL, NULL);
