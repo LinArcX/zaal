@@ -81,8 +81,9 @@ static void getNextChar_singleLine(void **state)
   uint32_t line = 0;
   uint32_t putBackChar = 0;
 
-  // 2 + 3 *5-8/ 3
-  setup(&pFile, "tests/scanner/assets/singleLine.txt");
+  // 1234567890  !@#$%^&*()-_=+[]{}\|'";:/?.>,<
+  // abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ`~
+  setup(&pFile, "tests/scanner/assets/allChars.txt");
 
   assert_int_equal(50, getNextChar(pFile, &line, &putBackChar)); // 50 = '2'
   assert_int_equal(32, getNextChar(pFile, &line, &putBackChar)); // 32 = SPACE

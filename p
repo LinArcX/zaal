@@ -7,7 +7,7 @@
 #     to get help on Neotree, just press ?
 #     toggle between Neotree: Shift-f
 #   switch between source/header: F2
-#   search files: ctrl-f, alt-f
+#   search files: ctrl-f, alt-f, C/Tab
 #   search strings: ctrl-g, alt-g, /
 #   find string/text in whole project: ft <text> | rg <text>
 #   folding/unfolding: z Shift+m, z Shift+r
