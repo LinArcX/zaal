@@ -68,6 +68,7 @@ void tearDown(FILE* pFile)
   }
 }
 
+// ---------------- getNextChar() ---------------- //
 /**
  * @brief testing all characters
  *
@@ -243,6 +244,7 @@ static void getNextChar_putBackChar(void **state)
   tearDown(pFile);
 }
 
+// ---------------- skipWihteSpaces() ---------------- //
 /**
  * @brief testing skipWihteSpaces
  *
@@ -293,8 +295,11 @@ static void skipWhiteSpacesTest(void **state)
 int scannerRunner(void)
 {
   const struct CMUnitTest tests[] = {
+      // ---------------- getNextChar() ---------------- //
       cmocka_unit_test(getNextChar_allChars),
       cmocka_unit_test(getNextChar_putBackChar),
+
+      // ---------------- skipWihteSpaces() ---------------- //
       cmocka_unit_test(skipWhiteSpacesTest),
   };
 

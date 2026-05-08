@@ -12,7 +12,7 @@ int main(void)
   failedTests += scannerRunner();
   failedTests += parserRunner();
 
-  printf("Number of all failed TCs: %d\n", failedTests);
+  printf("\n *** Number of all failed TCs: %d ***\n", failedTests);
 
   return failedTests;
 }
