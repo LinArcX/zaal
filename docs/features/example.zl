@@ -18,6 +18,13 @@
 function main.metadata { 
   // should be set by compiler and you can't change it -> otherwise compiler error!
   public: false,
+  memory.heapAllocation: {
+    enable: false,
+  },
+  memory.mmapAllocation: {
+    enable: true,
+    size: 6MB,
+  },
   inputArgs: [
     {
       // mandatory set by developer -> otherwise, compiler error!

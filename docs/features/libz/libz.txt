@@ -1,6 +1,7 @@
 "libz" is zaal standard libraray implementation, which provides:
 - runtime zaal APIs (print, fopen, malloc, memcpy, sockets wrappers, mmap wrappers, etc.)
-  - libz.io
+  - libz.os: everything that needs to do a syscall. like createng a socket, memory mapping, etc..
+  - libz.io: read/write in input/output devices like screen.
   - libz.math
 To implement them, we should have a directory called "libz". "io" and "math" are normal filesc inside it, which acts as modules.
 

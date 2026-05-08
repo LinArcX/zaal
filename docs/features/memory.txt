@@ -1,12 +1,13 @@
 # memory
-- each process on operating system has it's own memory address space. (stack + heap)
+- each process on operating system has it's own memory address space. (stack + heap + memoryMap region)
   - processes can't access the heap(or stack) from other processes. if they want to share data, they should use IPC techniques.
 - each process can have different threads.
   - each thread has it's own stack.
-  - threads inside a process use the same heap.
+  - threads inside a process use the same heap and memoryMap region.
 
 - each function has it's own stack frame.
   - inside functions you can use memory from the heap.
+  - you can access memory from bottom of stack. (the callers)
 
 - stack: is a LIFO data structure. and it increase downward in memory region. 
   - memory allocated on stack goes out of scope automatically when the function returns.
@@ -76,17 +77,21 @@
 
 
 # zaal memory management
-- we can't only rely on stack for memory.(otherwise we easily get stackoverflow) we "need" heap for large mount of data.
+- we can't only rely on stack for memory.(otherwise we easily get stackoverflow). we "need" heap or memoryMapped region for large mount of data.
 - but we need to be sure that allocation on the heap doesn't introduce all types of heap allocation issues.
 
 zaal memory allocation will be like this:
-- all types of data define on stack by default.
-- if you want to allocate them on heap, just prepend the declaration with "heap" keyword.
+- each data should explicitly mention (through it's metadata) where he wants to alloate data(stack, heap, memoryMap-region, etc..)
+  - there's no default behaviour. you should specify -> otherwise copmiler error!
+  - first function that use the data, is the owner of it. when that function goes out of scope, every data related to that will destroy and free.
+    - it doesn't matter if those data are allocated on stack or heap or mmr.
+    - data which defined outside functions, like struct tied to main function. and they valid until end of application.
+- for each allocation, we have different keywords.
   example:
-    int a; // allocated on stack
+    stack int a; // allocated on stack
     heap int b; // allocated on heap
-    heap array<int> myArray : {1, 2}; // allocated on heap
-    array<int> myArray : {1, 2}; // allocated on stack
+    mmr array<int> myArray : {1, 2}; // allocated on heap
+    stack array<int> myArray : {1, 2}; // allocated on stack
 
 - passing data to child functions is "const refrence" by default.
   - if you want to mutate data in child functions, prepnd data as "mut"
