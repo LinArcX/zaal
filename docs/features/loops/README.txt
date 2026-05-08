@@ -1,0 +1,4 @@
+- there are only two forms of iteration: for loops & while loops.
+- recursion is allowed through metadata, but you need to specify the maximum depth.
+  - unlimited recursion depth causes stackoverflow --> which is not allowed in zaal.
+  - we encourage you to not use recursion as much as you can. since it'll affect readability.

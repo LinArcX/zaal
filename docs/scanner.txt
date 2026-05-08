@@ -1,0 +1,2 @@
+# rules
+- identifiers should contain only english letters. (no underscore, no digits) -> otherwise compiler error.

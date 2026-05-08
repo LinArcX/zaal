@@ -1,94 +1,47 @@
-# zen
+# zen of zaal
 - simple abstraction / minimal implementaion.
-- no namespaces in zaal. instead we have modules. (each file is a module)
-- functions in zaal is the last layer of abstraction.
-- there's no recursion allowed.
-  - it prevents stackoverflow.
-  - it prevent reading code more understandable.
-- there are only two forms of iteration: for loops & while loops.
-- most of the errors should be catch at compile.
-- avoid adding million features taht do the same things but in different ways!
-- zaal compiler is stuipd. you need to tell him everything he needs to know.
-  - he doesn't "assume" anything for you. maybe just in few cases.
-- any mechanism that is outside the control of a compiler should be minimize.
-  - there's no inference.
-- zaal is not object oriented!
-  - there's no operator overloading.
-  - there's no polymorphism.
-  - there's no inheritance.
-    - this encourage users to use composition over inheritance.
-- there's no gc.
-- there's no macro.
-- there's no template.
-- there's no alias.
-- there's no type punning.
-- functions and variables should have metadata explaining what are their behaviour/features they have on compile time and runtime.
-- it's not possible to link with c/c++ code or any other programming langauge.
-- runtime should be very small.
+  - runtime should be very small.
+- avoid adding millions of features that do the same things but in different ways!
+- in zaal, we have only two entities. functions or data.
+  - functions are the last layer of abstraction.
+  - you should add metadata to them, which allows compiler knows what are their behaviour/features at compile/run time.
+- zaal compiler is stuipd, which means:
+  - you need to tell him everything you need. (through metadata mechanism)
+  - we tried to use less "inference" as much as we can.
+- it's also very strict, which means:
+  - it tries to catches the errors at compile-time as much as it can.
 
-- no support for dynamic libraries.
+# you don't see these things in zaal
+- gc
+- macro
+- alias
+- template
+- type punning
+- namespaces. instead we have modules. (each file is a module)
+- possiblity to link against c/c++ code/libraries or any other programming langauge.
+- dynamic libraries:
   - all the libraries and binaries should statically build.
-- there's no exception.
-  - zaal relies on error codes(Result).
-    - a Result is just a struct with 2 items:
-      struct result
+- OO:
+  - no operator overloading.
+  - no polymorphism.
+  - no inheritance.
+    - this encourage users to use composition over inheritance.
+- exceptions:
+  - zaal relies on metadata.outputArgs:
+    outputArgs: [ 
       {
-        enum i8 status: { SUCCESS, ERROR }
-        string message: "";
+        name: status,
+        type: bool,
+        allocatedOn: stack,
+        immutable: false
+      },
+      {
+        name: message,
+        type: string,
+        allocatedOn: stack,
+        immutable: false
       }
-    - RESULTs should be check on caller -> otherwise a compiler error will raise.
-- identifiers should contain only english letters. (no underscore, no digits)
-
-# keywords
-- import, pub
-- fn, if, while, for, enum, struct
-- addr, heap, transfer
-- defer
-
-# comments
-There are 2 types of comments:
-- code comments: //
-- doc comments: ///
-
-# operators
-  - dot: .
-    to access functions inside a module.
-    to access data inside struct/enum.
-    to call functions on containers(vecotr, heap, array, ...) -> which are modules again :)
-  - equality: "="
-    to compare two numbers(float, int, double)
-  - assignment: ":"
-  - less then: "<"
-  - less then equal: "<="
-  - greater then: ">"
-  - greater then equal: ">="
-  - array indices: "[]"
-  - discard: "_" (to ignore the Result of a function)
-  - not: "!"
-
-# primitive types
-  - bool(1 byte)
-  - char(1 byte) --> it has both char value and integer value of that char.
-  - s8, (signed) u8 (unsigned), f8 (float) --> you can't use these as characters, these are just numbers.
-  - s16, u16, f16
-  - s32, u32, f32
-  - s64, u64, f64
-  - string
-    It's just an array of chars with a length.
-    exmaple:
-      string simpleString = "hi". (which is equivalent to: array<char> arrayOfChars = {'h', 'i'})
-  - ssize, usize
-
-# file extensions and tools
-- .zl for zaal files.
-- zc is zaal compiler.
-- zf is zaal formatter.
-- zlsp is zaal lsp.
-- zrepl: zaal read/evaluate/print/loop.
-
-# todo
-- generics
-- multithreading.
+    - these are mandatory for each function. it means you need to define it as part of your function definition -> otherwise compiler error.
 
 # links
 - https://en.wikipedia.org/wiki/Z%C4%81l

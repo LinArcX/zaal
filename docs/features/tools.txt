@@ -1,0 +1,4 @@
+- zc is zaal compiler.
+- zf is zaal formatter.
+- zlsp is zaal lsp.
+- zrepl: zaal read/evaluate/print/loop.

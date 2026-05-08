@@ -1,0 +1,15 @@
+# operators
+  - dot: .
+    to access functions inside a module.
+    to access data inside struct/enum.
+    to call functions on containers(vecotr, heap, array, ...) -> which are modules again :)
+  - equality: "="
+    to compare two numbers(float, int, double)
+  - assignment: ":"
+  - less then: "<"
+  - less then equal: "<="
+  - greater then: ">"
+  - greater then equal: ">="
+  - array indices: "[]"
+  - discard: "_" (to ignore the Result of a function)
+  - not: "!"

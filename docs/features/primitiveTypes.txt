@@ -1,0 +1,12 @@
+# primitive types
+  - bool(1 byte)
+  - char(1 byte) --> it has both char value and integer value of that char.
+  - s8, (signed) u8 (unsigned), f8 (float) --> you can't use these as characters, these are just numbers.
+  - s16, u16, f16
+  - s32, u32, f32
+  - s64, u64, f64
+  - string
+    It's just an array of chars with a length.
+    exmaple:
+      string simpleString = "hi". (which is equivalent to: array<char> arrayOfChars = {'h', 'i'})
+  - ssize, usize

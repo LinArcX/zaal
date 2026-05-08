@@ -5,6 +5,7 @@ in zaal, we consider files as modules.
   structs
   variables
 
+- .zl for zaal files. -> otherwise compiler error.
 - everything in a module is private by default.
   unless you define them as publick by prepending them with "pub" keyword.
 

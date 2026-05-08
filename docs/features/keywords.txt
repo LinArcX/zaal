@@ -1,0 +1,5 @@
+# keywords
+- import, pub
+- function, if, while, for, enum, struct
+- addr, heap, transfer
+- defer

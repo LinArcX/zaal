@@ -176,7 +176,7 @@ int scan(const FILE* pFile,
         token->type = TOKEN_INTEGER;
         token->literal.integer = scanInteger(pFile, ch, line, putBackChar);
       }
-      else if (isalpha(ch) || '_' == ch) {
+      else if (isalpha(ch)) {
         // Read in a keyword or identifier
         scanIdentifier(pFile, ch, *Text, ETextLength, line, putBackChar);
 
