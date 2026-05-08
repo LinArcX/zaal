@@ -1,4 +1,5 @@
-- zc is zaal compiler.
-- zf is zaal formatter.
-- zlsp is zaal lsp.
-- zrepl: zaal read/evaluate/print/loop.
+- zaalc is zaal compiler.
+  zaalc -repl: interactive compiler. (interpreter)
+- zaalt is test binary.
+- zaalf is zaal formatter.
+- zaalsp is zaal lsp.

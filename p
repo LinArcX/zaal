@@ -10,7 +10,7 @@
 #   search files: ctrl-f, alt-f, C/Tab
 #   search strings: ctrl-g, alt-g, /
 #   find string/text in whole project: ft <text> | rg <text>
-#   folding/unfolding: z Shift+m, z Shift+r
+#   folding/unfolding: zM, zR
 #   documentation:
 #     , c c: generate doxygen doc for a class
 #     , n f: generate doxygen doc for a function
@@ -101,17 +101,17 @@ menu () {
       bear -- cc -g -pg -O0 -DDEBUG \
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
-        -std=c11 --coverage -lmagic -o ./build/debug/zaal \
-        ./src/main.c ./src/util/fileUtil.c ./src/scanner.c ./src/zutil.c
+        -std=c11 --coverage -o ./build/debug/zaalc \
+        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c ./src/zutil.c
       ;;
     "run(debug)")
       cd build/debug
-      ./zaal 
+      ./zaalc
       cd ../..
       ;;
     "gdb")
       cd build/debug
-      gdb --tui zaal
+      gdb --tui zaalc
       cd ../..
       ;;
     "clean(debug)")
@@ -123,12 +123,16 @@ menu () {
       mkdir -p build/release
  
       echo ">>> compiling (release mode)"
-      cc -O3 -pg -Wall -Wextra -pedantic -std=c11 --coverage -o ./build/release/zaal $(pkg-config --cflags notcurses) ./src/*.c $(pkg-config --libs notcurses)
+      cc -pg -O3 \
+        -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
+        -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
+        -std=c11 --coverage -o ./build/release/zaalc \
+        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c ./src/zutil.c
       ;;
     "run(release)")
-      echo ">>> running zaal (release)"
+      echo ">>> running zaalc (release)"
       cd build/release
-      ./zaal
+      ./zaalc
       cd ../..
       ;;
     "clean(release)")
@@ -144,17 +148,17 @@ menu () {
       cc -g -pg -O0 -DDEBUG -std=c11 --coverage \
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
-        -lcmocka -o ./build/tests/zaalTests \
-        ./tests/main.c ./tests/util/*.c ./tests/scanner/*.c ./tests/parser/*.c ./src/zutil* ./src/util/fileUtil.c 
+        -lcmocka -o ./build/tests/zaalt \
+        ./tests/main.c ./tests/util/*.c ./tests/scanner/*.c ./tests/parser/*.c ./src/zutil* ./src/util/zaalStrings.c 
       ;;
     "run(tests)")
       cd build/tests
-      ./zaalTests
+      ./zaalt
       cd ../..
       ;;
     "gdb(tests)")
       cd build/tests
-      gdb --tui zaalTests
+      gdb --tui zaalt
       cd ../..
       ;;
     "clean(tests)")
@@ -195,7 +199,7 @@ menu () {
       ;;
     "lcov")
       # https://wiki.cs.jmu.edu/student/gcov/start
-      ./build/debug/zaal
+      ./build/debug/zaalc
       lcov --capture --directory build/debug --output-file build/debug/coverage.info
       ;;
     "gcovr")
@@ -210,7 +214,7 @@ menu () {
       ;;
     "kcov(generate)")
       rm -r coverage/*
-      kcov coverage/ build/debug/zaal
+      kcov coverage/ build/debug/zaalc
       ;;
     "kcov(show)")
       ~/software/brave/brave-browser-1.86.142-linux-amd64/brave ./coverage/index.html
@@ -219,37 +223,37 @@ menu () {
     "llvm-cov")
       ;;
     "valgrind(memcheck)")
-      valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes --xtree-leak=yes -s -v build/debug/zaal
+      valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes --xtree-leak=yes -s -v build/debug/zaalc
       ;;
     "callgrind")
-      valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes -s -v build/debug/zaal
+      valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes -s -v build/debug/zaalc
       ;;
     "kcachegrind")
       ls callgrind.out.* cachegrind.out.* | fzf --header="kcachgrind: " | xargs kcachegrind
       ;;
     "cachegrind")
-      valgrind --tool=cachegrind --cache-sim=yes --branch-sim=yes -s -v build/debug/zaal
+      valgrind --tool=cachegrind --cache-sim=yes --branch-sim=yes -s -v build/debug/zaalc
       ;;
     "helgrind")
-      valgrind --tool=helgrind -s -v build/debug/zaal
+      valgrind --tool=helgrind -s -v build/debug/zaalc
       ;;
     "massif")
-      valgrind --tool=massif -s -v build/debug/zaal
+      valgrind --tool=massif -s -v build/debug/zaalc
       ;;
     "ms_print")
       ls massif.out.* | fzf --header="ms_print: " | xargs ms_print
       ;;
     "drd")
-      valgrind --tool=drd --trace-fork-join=yes --trace-mutex=yes --trace-semaphore=yes -s -v build/debug/zaal
+      valgrind --tool=drd --trace-fork-join=yes --trace-mutex=yes --trace-semaphore=yes -s -v build/debug/zaalc
       ;;
     "dhat")
-      valgrind --tool=dhat -s -v build/debug/zaal
+      valgrind --tool=dhat -s -v build/debug/zaalc
       ;;
     "dhat(cat)")
       ls dhat.out.* | fzf --header="dhat: " | xargs cat | less
       ;;
     "bbv")
-      valgrind --tool=exp-bbv -s -v build/debug/zaal
+      valgrind --tool=exp-bbv -s -v build/debug/zaalc
       ;;
     "bbv(cat)")
       ls bb.out.* | fzf --header="bbv: " | xargs cat | less
@@ -258,7 +262,7 @@ menu () {
       ls build/debug | fzf --header="perf: " | xargs perf stat -d
       ;;
     "uftrace record(test)")
-      uftrace --srcline -a --symbols --time --no-libcall --symbols -F __clove_symint___UtilSuite* record build/debug/zaal
+      uftrace --srcline -a --symbols --time --no-libcall --symbols -F __clove_symint___UtilSuite* record build/debug/zaalc
       ;;
     "uftrace replay(tests)")
       uftrace replay

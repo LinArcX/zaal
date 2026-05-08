@@ -2,7 +2,7 @@
 #include <unistd.h>
 
 #include "../../src/scanner.c"
-#include "../../src/util/fileUtil.h"
+#include "../../src/util/zaalStrings.h"
 
 /**
  *    ASCII tables in hex and decimal.
