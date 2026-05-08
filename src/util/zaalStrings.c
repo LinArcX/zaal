@@ -4,7 +4,6 @@
 #include <libgen.h>
 
 #include "zaalStrings.h"
-#include "../zutil.h"
 
 bool charPointerToArray(const char * const inputString,
     char outputString[], uint32_t maxStringSize)
@@ -27,17 +26,17 @@ bool charPointerToArray(const char * const inputString,
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length >= maxStringSize\n",
-          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length <= 0\n",
-        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputString is NULL\n",
-      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+      getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
   }
   return result;
 }
@@ -68,17 +67,17 @@ bool reverseString(const char * const inputString,
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputStringLength >= maxStringSize\n",
-          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputStringLength <= 0\n",
-        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputString is NULL\n",
-      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+      getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
   }
   return result;
 }
@@ -104,11 +103,11 @@ bool getExtensionOfFile(const char * const fileName,
     }
     else if (0 == length) {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n",
-        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n",
-        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   return result;
@@ -148,16 +147,16 @@ bool removeSubDirectoryFromPath(char * path,
       }
       else if (0 == length) {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n",
-          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n",
-          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is NULL\n",
-        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
@@ -186,7 +185,7 @@ int zaalMemCopy(void* dest, size_t destSize,
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> destSize < srcSize\n",
-      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+      getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
   }
 
   return result;

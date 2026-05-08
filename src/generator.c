@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "zutil.h"
 #include "parser.h"
 #include "asmGenerator.h"
 

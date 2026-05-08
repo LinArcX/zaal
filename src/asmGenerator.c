@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "zutil.h"
 #include "asmGenerator.h"
 
 // List of available registers and their names

@@ -45,7 +45,7 @@ void setup(FILE** pFile, char* path)
     *pFile = fopen(abs, "r");
     if (NULL == *pFile) {
       fprintf(stderr, "[%s: <%s> | %s() | %d] -> pFile is NULL\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       pFile = NULL;
     }
   }
@@ -61,7 +61,7 @@ void tearDown(FILE* pFile)
   if (NULL != pFile) {
     if (fclose(pFile) != 0) {
       fprintf(stderr, "[%s: <%s> | %s() | %d] -> can't close the file\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       //perror("fclose");
     }
     pFile = NULL;

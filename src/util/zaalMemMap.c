@@ -1,14 +1,12 @@
 #include "zaalMemMap.h"
+#include "zaalStrings.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "../zutil.h"
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 bool mapFileToMemory(const char * const fileName,
     int* fd,
@@ -39,31 +37,31 @@ bool mapFileToMemory(const char * const fileName,
           }
           else {
             fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s] -> file is empty!\n",
-              errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+              getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
             close(*fd);
           }
         }
         else {
           fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s] -> file is empty!\n",
-            errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+            getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
           close(*fd);
         }
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s] -> file is empty!\n",
-          errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
         close(*fd);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-        errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
       close(*fd);
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-        errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
   }
   return result;
 }
@@ -82,17 +80,17 @@ bool unmapFileFromMemory(char* mapped,
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-          errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+          getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-        errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-      errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+      getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
   }
   return result;
 }
@@ -121,12 +119,12 @@ bool getCharFromMemMap(char* mapped,
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-        errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+        getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s]\n",
-      errorType(INFO), __FILE__, __func__, __LINE__, strerror(errno));
+      getErrorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__, strerror(errno));
   }
 
   return result;

@@ -102,7 +102,7 @@ menu () {
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
         -std=c11 --coverage -lmagic -o ./build/debug/zaalc \
-        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c ./src/zutil.c
+        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c
       ;;
     "run(debug)")
       cd build/debug
@@ -127,7 +127,7 @@ menu () {
         -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
         -std=c11 --coverage -lmagic -o ./build/release/zaalc \
-        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c ./src/zutil.c
+        ./src/main.c ./src/util/zaalStrings.c ./src/scanner.c
       ;;
     "run(release)")
       echo ">>> running zaalc (release)"
@@ -149,7 +149,7 @@ menu () {
         -Wformat=2 -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wshadow -Wwrite-strings -Wstrict-prototypes \
         -Wold-style-definition -Wredundant-decls -Wnested-externs -Wmissing-include-dirs -Wjump-misses-init -Wlogical-op \
         -lcmocka -o ./build/tests/zaalt \
-        ./tests/main.c ./tests/util/*.c ./tests/scanner/*.c ./tests/parser/*.c ./src/zutil* ./src/util/zaalStrings.c 
+        ./tests/main.c ./tests/util/*.c ./tests/scanner/*.c ./tests/parser/*.c ./src/util/zaalStrings.c 
       ;;
     "run(tests)")
       cd build/tests

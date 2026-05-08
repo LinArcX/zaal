@@ -1,6 +1,9 @@
 #ifndef ZAAL_MEM_MAP_H
 #define ZAAL_MEM_MAP_H
 
+#include <stdbool.h>
+#include <sys/stat.h>
+
 /**
  * @brief map a file content as read-only to memory area
  *

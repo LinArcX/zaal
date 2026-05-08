@@ -9,9 +9,9 @@ static void charPointerToArray_empty(void **state)
   (void)state;
 
   const char * const inputString = "";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(charPointerToArray(inputString, outputString, MAX_STRING_SIZE));
+  assert_false(charPointerToArray(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "");
   assert_string_equal(outputString, "");
 }
@@ -19,9 +19,9 @@ static void charPointerToArray_empty(void **state)
 static void charPointerToArray_oneChar(void **state)
 {
   const char * const inputString = "b";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(charPointerToArray(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(charPointerToArray(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "b");
   assert_string_equal(outputString, "b");
 }
@@ -29,9 +29,9 @@ static void charPointerToArray_oneChar(void **state)
 static void charPointerToArray_normalString(void **state)
 {
   const char * const inputString = "this is a normal string.";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(charPointerToArray(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(charPointerToArray(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "this is a normal string.");
   assert_string_equal(outputString, "this is a normal string.");
 }
@@ -39,9 +39,9 @@ static void charPointerToArray_normalString(void **state)
 static void charPointerToArray_normalStringWithStrangeChar(void **state)
 {
   const char * const inputString = ">/?   such a !strange +-_@#~ string:))^~.";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(charPointerToArray(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(charPointerToArray(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, ">/?   such a !strange +-_@#~ string:))^~.");
   assert_string_equal(outputString, ">/?   such a !strange +-_@#~ string:))^~.");
 }
@@ -60,9 +60,9 @@ static void charPointerToArray_veryBigString(void **state)
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     ";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(charPointerToArray(verbigString, outputString, MAX_STRING_SIZE));
+  assert_false(charPointerToArray(verbigString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(verbigString, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
@@ -82,9 +82,9 @@ static void charPointerToArray_veryBigString(void **state)
 static void reverseString_empty(void **state)
 {
   const char * const inputString = "";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(reverseString(inputString, outputString, MAX_STRING_SIZE));
+  assert_false(reverseString(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "");
   assert_string_equal(outputString, "");
 }
@@ -92,9 +92,9 @@ static void reverseString_empty(void **state)
 static void reverseString_oneChar(void **state)
 {
   const char * const inputString = "z";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(reverseString(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(reverseString(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "z");
   assert_string_equal(outputString, "z");
 }
@@ -102,9 +102,9 @@ static void reverseString_oneChar(void **state)
 static void reverseString_normalString(void **state)
 {
   const char * const inputString = "this is a normal string.";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(reverseString(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(reverseString(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, "this is a normal string.");
   assert_string_equal(outputString, ".gnirts lamron a si siht");
 }
@@ -112,9 +112,9 @@ static void reverseString_normalString(void **state)
 static void reverseString_normalStringWithStrangeChars(void **state)
 {
   const char * const inputString = ">/?   such a !strange +-_@#~ string:))^~.";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(reverseString(inputString, outputString, MAX_STRING_SIZE));
+  assert_true(reverseString(inputString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(inputString, ">/?   such a !strange +-_@#~ string:))^~.");
   assert_string_equal(outputString, ".~^)):gnirts ~#@_-+ egnarts! a hcus   ?/>");
 }
@@ -133,9 +133,9 @@ static void reverseString_veryBigString(void **state)
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     ";
-  char outputString[MAX_STRING_SIZE] = {0};
+  char outputString[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(reverseString(verbigString, outputString, MAX_STRING_SIZE));
+  assert_false(reverseString(verbigString, outputString, ZAAL_MAX_STRING_SIZE));
   assert_string_equal(verbigString, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
                                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\
@@ -155,9 +155,9 @@ static void reverseString_veryBigString(void **state)
 static void getExtensionOfFile_emptyFileName(void **state)
 {
   char file[]= "";
-  char ext[MAX_STRING_SIZE] = {0};
+  char ext[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(getExtensionOfFile(file, ext, MAX_FILE_EXTENSION_SIZE));
+  assert_false(getExtensionOfFile(file, ext, ZAAL_MAX_FILE_EXTENSION_SIZE));
   assert_string_equal(file, "");
   assert_string_equal(ext, "");
 }
@@ -165,9 +165,9 @@ static void getExtensionOfFile_emptyFileName(void **state)
 static void getExtensionOfFile_withoutExtension(void **state)
 {
   char file[]= "fileName";
-  char ext[MAX_STRING_SIZE] = {0};
+  char ext[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_false(getExtensionOfFile(file, ext, MAX_FILE_EXTENSION_SIZE));
+  assert_false(getExtensionOfFile(file, ext, ZAAL_MAX_FILE_EXTENSION_SIZE));
   assert_string_equal(file, "fileName");
   assert_string_equal(ext, "");
 }
@@ -175,9 +175,9 @@ static void getExtensionOfFile_withoutExtension(void **state)
 static void getExtensionOfFile_multipleDots(void **state)
 {
   char file[] = "avatar.jpg.zip";
-  char ext[MAX_STRING_SIZE] = {0};
+  char ext[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(getExtensionOfFile(file, ext, MAX_FILE_EXTENSION_SIZE));
+  assert_true(getExtensionOfFile(file, ext, ZAAL_MAX_FILE_EXTENSION_SIZE));
   assert_string_equal(file, "avatar.jpg.zip");
   assert_string_equal(ext, "zip");
 }
@@ -185,9 +185,9 @@ static void getExtensionOfFile_multipleDots(void **state)
 static void getExtensionOfFile_onlyOneDot(void **state)
 {
   char file[]= "document.txt";
-  char ext[MAX_STRING_SIZE] = {0};
+  char ext[ZAAL_MAX_STRING_SIZE] = {0};
 
-  assert_true(getExtensionOfFile(file, ext, MAX_FILE_EXTENSION_SIZE));
+  assert_true(getExtensionOfFile(file, ext, ZAAL_MAX_FILE_EXTENSION_SIZE));
   assert_string_equal(file, "document.txt");
   assert_string_equal(ext, "txt");
 }

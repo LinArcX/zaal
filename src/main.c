@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <magic.h>
 #include "scanner.h"
-#include "zutil.h"
 #include "util/zaalStrings.h"
 
 //#include "parser.h"
@@ -27,8 +26,8 @@ int main(int argc, const char* argv[])
           if(0 == strcmp(mime, "text/x-c++") || 0 == strcmp(mime, "text/plain")) {
             printf("%s mimetype is: %s\n", argv[1], mime);
 
-            char ext[MAX_STRING_SIZE] = {0};
-            if (getExtensionOfFile(argv[1], ext, MAX_FILE_EXTENSION_SIZE)) {
+            char ext[ZAAL_MAX_STRING_SIZE] = {0};
+            if (getExtensionOfFile(argv[1], ext, ZAAL_MAX_FILE_EXTENSION_SIZE)) {
               if (0 == strcmp(ext, "zl")) {
                 const FILE* pSourceFile = fopen(argv[1], "r");
                 if (NULL == pSourceFile) {
@@ -39,7 +38,7 @@ int main(int argc, const char* argv[])
                   Token token = {0};
                   uint32_t line = 1;
 
-                  char Text[ETextLength] = {0};
+                  char Text[E_CONST_TEXT_LENGTH] = {0};
 
                   // sometimes we need to "put back" a character if we have already read too far ahead in the input stream. 0 in ASCII mean NULL
                   uint32_t putBackChar = 0;  

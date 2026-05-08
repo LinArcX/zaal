@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
+#include "util/zaalStrings.h"
 #include "scanner.h"
-#include "zutil.h"
 
 static int getNextChar(const FILE* pFile,
   uint32_t * const line,
@@ -82,7 +82,7 @@ static int scanIdentifier(const FILE* pFile,
   while (isalpha(c) || isdigit(c) || '_' == c) {
     // Error if we hit the identifier length limit, else append to buf[] and get next character
     if (lim - 1 == i) {
-      fprintf(stderr, "[%s, %s, %s(), %d] identifier too long on line %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, line);
+      fprintf(stderr, "[%s, %s, %s(), %d] identifier too long on line %d\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__, line);
       //return 0;
     } 
     else if (i < lim - 1) {
@@ -106,13 +106,13 @@ static int keyword(char *s)
   case 'p':
     if (!strcmp(s, "print"))
     {
-      return (TOKEN_PRINT);
+      return (E_TOKEN_PRINT);
     }
     break;
   case 'i':
     if (!strcmp(s, "int"))
     {
-      return (TOKEN_INT);
+      return (E_TOKEN_INT);
     }
     break;
   }
@@ -123,76 +123,76 @@ int scan(const FILE* pFile,
   Token    * const token,
   uint32_t * const line,
   uint32_t * const putBackChar,
-  char (*Text) [ETextLength])
+  char (*Text) [E_CONST_TEXT_LENGTH])
 {
   bool result = false;
   if (NULL == token) {
-    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", errorType(ERROR), __FILE__, __func__, __LINE__);
+    fprintf(stderr, "[%s, %s, %s(), %d] token is NULL!\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__);
   }
   else {
     memset(token, 0, sizeof(Token));
     int ch = skipWhiteSpaces(pFile, line, putBackChar);
 
     if(EOF == ch) {
-      token->type = TOKEN_EOF;
+      token->type = E_TOKEN_EOF;
       return result;
     }
     else if('+' == ch) {
-      token->type = TOKEN_PLUS;
-      if(!zmemcpy(token->literal.oprator, "+")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
+      token->type = E_TOKEN_PLUS;
+      if(!zaalMemCopy(token->literal.oprator, 3, "+", sizeof(ch))) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
     else if('-' == ch) {
-      token->type = TOKEN_MINUS;
-      if(!zmemcpy(token->literal.oprator, "-")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
+      token->type = E_TOKEN_MINUS;
+      if(!zaalMemCopy(token->literal.oprator, 3, "-", sizeof(ch))) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
     else if('*' == ch) {
-      token->type = TOKEN_STAR;
-      if(!zmemcpy(token->literal.oprator, "*")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
+      token->type = E_TOKEN_STAR;
+      if(!zaalMemCopy(token->literal.oprator, 3, "*", sizeof(ch))) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__);
         return result;
       } 
     }
     else if('/' == ch) {
-      token->type = TOKEN_SLASH;
-      if(!zmemcpy(token->literal.oprator, "/")) {
-        fprintf(stderr, "[%s, %s, %s(), %d]\n", errorType(ERROR), __FILE__, __func__, __LINE__);
+      token->type = E_TOKEN_SLASH;
+      if(!zaalMemCopy(token->literal.oprator, 3, "/", sizeof(ch))) {
+        fprintf(stderr, "[%s, %s, %s(), %d]\n", getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__);
         return result;
       }
     }
     else if(';' == ch) {
-      token->type = TOKEN_SEMICOLON;
+      token->type = E_TOKEN_SEMICOLON;
     }
     else if('=' == ch) {
-      token->type = TOKEN_EQUALS;
+      token->type = E_TOKEN_EQUALS;
     }
     else {
       if (isdigit(ch)) {
-        token->type = TOKEN_INTEGER;
+        token->type = E_TOKEN_INTEGER;
         token->literal.integer = scanInteger(pFile, ch, line, putBackChar);
       }
       else if (isalpha(ch)) {
         // Read in a keyword or identifier
-        scanIdentifier(pFile, ch, *Text, ETextLength, line, putBackChar);
+        scanIdentifier(pFile, ch, *Text, E_CONST_TEXT_LENGTH, line, putBackChar);
 
         int tokenType = keyword(*Text);
         if (tokenType) {
           token->type = tokenType;
         }
         else {
-          token->type = TOKEN_IDENTIFIER;
+          token->type = E_TOKEN_IDENTIFIER;
         }
         //fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised symbol %S on line %d\n", errorType(ERROR), __FILE__, __func__, __LINE__, Text, line);
         //exit(1);
       }
       else {
         fprintf(stderr, "[%s, %s, %s(), %d] Unrecognised character %c on line %d\n",
-          errorType(ERROR), __FILE__, __func__, __LINE__, ch, line);
+          getErrorType(E_ZAAL_ERROR), __FILE__, __func__, __LINE__, ch, line);
       }
     }
     result = true;
