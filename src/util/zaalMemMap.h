@@ -14,7 +14,8 @@
  */
 bool mapFileToMemory(const char * const fileName,
     int* fd,
-    struct stat* st);
+    struct stat* st,
+    char* mapped);
 
 /**
  * @brief unmap memory area
@@ -25,8 +26,8 @@ bool mapFileToMemory(const char * const fileName,
  * @return 
  */
 bool unmapFileFromMemory(char* mapped,
-    struct stat* st,
-    int* fd);
+    int* fd,
+    struct stat* st);
  
 /**
  * @brief get next character from memory-mapped space
@@ -36,7 +37,7 @@ bool unmapFileFromMemory(char* mapped,
  * @param ch 
  * @return 
  */
-bool getCharFromMemMap(char* mapped,
+bool getNextCharFromMemMap(char* mapped,
   struct stat* st,
   char* ch);
 

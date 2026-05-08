@@ -1,0 +1,9 @@
+"libz" is zaal standard libraray implementation, which provides:
+- runtime zaal APIs (print, fopen, malloc, memcpy, sockets wrappers, mmap wrappers, etc.)
+  - libz.io
+  - libz.math
+To implement them, we should have a directory called "libz". "io" and "math" are normal filesc inside it, which acts as modules.
+
+# TODO
+For POXI/Unix system calls (like mmap in linux syscalls), we should expose them user programs via libz.
+  - since the OS normally works with raw and unsafe memory, the job of libz is to provide a safe wrapper to user land.

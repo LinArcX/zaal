@@ -10,7 +10,8 @@
 
 bool mapFileToMemory(const char * const fileName,
     int* fd,
-    struct stat* st)
+    struct stat* st,
+    char* mapped)
 {
   bool result = false;
 
@@ -22,18 +23,12 @@ bool mapFileToMemory(const char * const fileName,
       if (NULL != st) {
         if (st->st_size > 0) {
           // 3. Memory map the file (read-only)
-          char* mapped = (char*)mmap(NULL, st->st_size, 
+          mapped = (char*)mmap(NULL, st->st_size, 
                                      PROT_READ,          // Read only
                                      MAP_PRIVATE,        // Private mapping (copy-on-write)
                                      *fd, 0);
           if (MAP_FAILED != mapped) {
             result = true;
-            //// 4. Use the mapped memory like a normal array/buffer
-            //// Example: print first 100 bytes
-            //for(size_t i = 0; i < 100 && i < (size_t)st->st_size; i++) {
-            //    putchar(mapped[i]);
-            //    result = true;
-            //}
           }
           else {
             fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d | errno: %s] -> file is empty!\n",
@@ -67,8 +62,8 @@ bool mapFileToMemory(const char * const fileName,
 }
 
 bool unmapFileFromMemory(char* mapped,
-    struct stat* st,
-    int* fd)
+    int* fd,
+    struct stat* st)
 {
   bool result = false;
   if (NULL != mapped) {
@@ -95,7 +90,7 @@ bool unmapFileFromMemory(char* mapped,
   return result;
 }
 
-bool getCharFromMemMap(char* mapped,
+bool getNextCharFromMemMap(char* mapped,
   struct stat* st,
   char* ch)
 {
