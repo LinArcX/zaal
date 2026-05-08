@@ -27,17 +27,17 @@ bool charPointerToArray(const char * const inputString,
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length >= maxStringSize\n",
-          errorType(INFO), __FILE__, __func__, __LINE__);
+          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length <= 0\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputString is NULL\n",
-      errorType(INFO), __FILE__, __func__, __LINE__);
+      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
   }
   return result;
 }
@@ -68,17 +68,17 @@ bool reverseString(const char * const inputString,
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputStringLength >= maxStringSize\n",
-          errorType(INFO), __FILE__, __func__, __LINE__);
+          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputStringLength <= 0\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
     fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> inputString is NULL\n",
-      errorType(INFO), __FILE__, __func__, __LINE__);
+      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
   }
   return result;
 }
@@ -104,11 +104,11 @@ bool getExtensionOfFile(const char * const fileName,
     }
     else if (0 == length) {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   return result;
@@ -148,16 +148,16 @@ bool removeSubDirectoryFromPath(char * path,
       }
       else if (0 == length) {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is empty\n",
-          errorType(INFO), __FILE__, __func__, __LINE__);
+          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
       else {
         fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> length < 0\n",
-          errorType(INFO), __FILE__, __func__, __LINE__);
+          errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
       }
     }
     else {
       fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> path is NULL\n",
-        errorType(INFO), __FILE__, __func__, __LINE__);
+        errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
     }
   }
   else {
@@ -165,4 +165,48 @@ bool removeSubDirectoryFromPath(char * path,
   }
   
   return result;
+}
+
+int zaalMemCopy(void* dest, size_t destSize,
+  void* src, size_t srcSize)
+{
+  bool result = false;
+
+  if(destSize >= srcSize) {
+    if (dest < src && dest + srcSize > src) {
+      memmove(dest, src, srcSize);
+    }
+    else if (src < dest && src + srcSize > dest) {
+      memmove(dest, src, srcSize);
+    }
+    else {
+      memcpy(dest, src, srcSize);
+    }
+    result = true;
+  }
+  else {
+    fprintf(stderr, "[*********** %s file: %s | func: %s() | line: %d] -> destSize < srcSize\n",
+      errorType(E_ZAAL_INFO), __FILE__, __func__, __LINE__);
+  }
+
+  return result;
+}
+
+char* getErrorType(int type)
+{
+  if(E_ZAAL_INFO == type) {
+    return (char*)"INFO";
+  }
+  else if(E_ZAAL_WARNING == type) {
+    return (char*)"WARNING";
+  }
+  else if(E_ZAAL_ERROR == type) {
+    return (char*)"ERROR";
+  }
+  else if(E_ZAAL_FATAL == type) {
+    return (char*)"FATAL";
+  }
+  else {
+    return (char*)"UKNOWN";
+  }
 }

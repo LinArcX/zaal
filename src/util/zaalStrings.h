@@ -1,11 +1,20 @@
 #ifndef ZAAL_FILE_UTIL_H
 #define ZAAL_FILE_UTIL_H
 
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MAX_STRING_SIZE 512
-#define MAX_FILE_EXTENSION_SIZE 16
+//extern FILE	*pOutFile;
+#define ZAAL_MAX_STRING_SIZE 512
+#define ZAAL_MAX_FILE_EXTENSION_SIZE 16
+
+enum Z_ERROR {
+  E_ZAAL_INFO,
+  E_ZAAL_WARNING,
+  E_ZAAL_ERROR,
+  E_ZAAL_FATAL
+};
 
 /**
  * @brief transfer a pointer to an array with pre-defined size
@@ -54,5 +63,25 @@ bool getExtensionOfFile(const char * const fileName,
  */
 bool removeSubDirectoryFromPath(char * path,
     uint32_t numbersOfSubDirsToRemove);
+
+/**
+ * @brief copy content of memory from dest to src
+ *
+ * @param dest 
+ * @param destSize 
+ * @param src 
+ * @param srcSize 
+ * @return 
+ */
+int zaalMemCopy(void* dest, size_t destSize,
+  void* src, size_t srcSize);
+
+/**
+ * @brief return the string equivalent of error type
+ *
+ * @param type 
+ * @return 
+ */
+char* getErrorType(int type);
 
 #endif // ZAAL_FILE_UTIL_H
